@@ -1,0 +1,163 @@
+---
+import Mark from './Mark.astro';
+import { BRAND, GITHUB_REPO_URL } from '../config';
+import { linker, type LinkMode } from '../lib/links';
+import { productList, type Product } from '../data/products';
+
+interface Props {
+  mode?: LinkMode;
+  /** When set, the header shows a breadcrumb to this product. */
+  product?: Product;
+  current?: string;
+}
+const { mode = 'relative', product, current } = Astro.props;
+const href = linker(mode);
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href={href('/')} aria-label={`${BRAND} home`}>
+      <Mark size={26} />
+      <span class="wordmark">{BRAND}</span>
+      {
+        product && (
+          <>
+            <span class="sep" aria-hidden="true">
+              /
+            </span>
+            <span class="crumb">{product.name}</span>
+          </>
+        )
+      }
+    </a>
+    <nav aria-label="Primary">
+      <ul>
+        {
+          productList.map((p) => (
+            <li>
+              <a
+                href={href(`/${p.slug}`)}
+                aria-current={current === p.slug ? 'page' : undefined}
+                style={`--c: var(--${p.slug})`}
+              >
+                <span class="swatch" aria-hidden="true" />
+                {p.name}
+              </a>
+            </li>
+          ))
+        }
+        <li class="wide">
+          <a href={href('/privacy')} aria-current={current === 'privacy' ? 'page' : undefined}>Privacy</a>
+        </li>
+        <li class="wide">
+          <a href={href('/support')} aria-current={current === 'support' ? 'page' : undefined}>Support</a>
+        </li>
+        <li>
+          <a href={GITHUB_REPO_URL} rel="noopener">Source<span class="arrow" aria-hidden="true">↗</span></a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    border-bottom: 1px solid var(--rule);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    height: 3.75rem;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .sep {
+    color: var(--ink-3);
+  }
+  .crumb {
+    color: var(--ink-3);
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+  }
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    color: var(--ink-2);
+    padding: 0.35rem 0;
+    border-bottom: 1px solid transparent;
+    transition: color 160ms ease, border-color 160ms ease;
+  }
+  nav a:hover,
+  nav a[aria-current='page'] {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+  }
+  .swatch {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 1px;
+    background: var(--c, var(--ink));
+    transform: rotate(45deg);
+  }
+  .arrow {
+    font-size: 0.8em;
+    transform: translateY(-1px);
+  }
+  @media (max-width: 720px) {
+    .wordmark {
+      display: none;
+    }
+    .sep {
+      display: none;
+    }
+    .wide {
+      display: none;
+    }
+    nav {
+      min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar {
+      display: none;
+    }
+    nav ul {
+      gap: 0.9rem;
+    }
+    nav a {
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+  }
+  @media (max-width: 480px) {
+    .swatch {
+      display: none;
+    }
+  }
+</style>

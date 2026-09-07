@@ -1,0 +1,503 @@
+---
+import Base from './Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ProductIcon from '../components/ProductIcon.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import { CHECKOUT_URLS, PRODUCT_LINKS, REFUND_WINDOW_DAYS, STORE_URLS } from '../config';
+import { abs, privacyUrl, productHome, termsUrl } from '../lib/links';
+import type { Product } from '../data/products';
+
+/**
+ * Product pages are served from two hosts (landing host `/arbor` and
+ * `arbor.shantanuojha.com/`). Every outbound link here is therefore an
+ * absolute URL; only `#anchors` are relative.
+ */
+interface Props {
+  product: Product;
+}
+const { product: p } = Astro.props;
+
+const store = STORE_URLS[p.slug];
+const checkout = CHECKOUT_URLS[p.slug] ?? null;
+const links = PRODUCT_LINKS[p.slug];
+const canonical = productHome(p.slug);
+const description = `${p.name}: ${p.category.toLowerCase()} for Chrome and Edge. ${p.tagline}`;
+---
+
+<Base
+  title={p.name}
+  description={description}
+  canonical={canonical}
+  ogImage={`/og/${p.slug}.png`}
+  bodyClass={`theme-${p.slug}`}
+>
+  <Header mode="absolute" product={p} current={p.slug} />
+
+  <main id="main" style={`--c: var(--${p.slug})`}>
+    <!-- Hero -->
+    <section class="hero container">
+      <div class="meta reveal" style="--i: 0">
+        <span class="mono idx">{p.index}</span>
+        <span class="mono">{p.category}</span>
+        <StatusBadge status={p.status} note={p.statusNote} />
+      </div>
+      <div class="hero-grid">
+        <div class="copy">
+          <h1 class="reveal" style="--i: 1">
+            <ProductIcon slug={p.slug} size={56} class="icon" />
+            {p.name}
+          </h1>
+          <p class="tagline reveal" style="--i: 2">{p.tagline}</p>
+          <p class="summary reveal" style="--i: 3">{p.summary}</p>
+          <div class="cta reveal" style="--i: 4">
+            {
+              store.chrome ? (
+                <a class="btn accent" href={store.chrome} rel="noopener">
+                  Add to Chrome
+                </a>
+              ) : (
+                <span class="btn" aria-disabled="true" title="Not yet published to the Chrome Web Store">
+                  Add to Chrome
+                  <span class="soon">soon</span>
+                </span>
+              )
+            }
+            {
+              store.edge ? (
+                <a class="btn ghost" href={store.edge} rel="noopener">
+                  Add to Edge
+                </a>
+              ) : null
+            }
+            <a class="btn ghost" href={links.source} rel="noopener">Source</a>
+          </div>
+          <p class="status-note reveal" style="--i: 5">{p.statusNote}</p>
+        </div>
+        <nav class="toc reveal" style="--i: 3" aria-label="On this page">
+          <span class="mono">On this page</span>
+          <ol>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#import">Import from {p.imports.from}</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#privacy">Privacy and changelog</a></li>
+          </ol>
+        </nav>
+      </div>
+    </section>
+
+    <div class="container">
+      <!-- Features -->
+      <section class="sheet" id="features" aria-labelledby="features-title">
+        <aside>
+          <span class="num" aria-hidden="true">01</span>
+          <span class="mono">Features</span>
+        </aside>
+        <div>
+          <h2 id="features-title">What it does</h2>
+          <ol class="features" role="list">
+            {
+              p.features.map((f, i) => (
+                <li>
+                  <span class="mono fi">{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <strong>{f.title}</strong>
+                    <p>{f.body}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </section>
+
+      <!-- Import -->
+      <section class="sheet" id="import" aria-labelledby="import-title">
+        <aside>
+          <span class="num" aria-hidden="true">02</span>
+          <span class="mono">Migration</span>
+        </aside>
+        <div class="callout">
+          <h2 id="import-title">Import from {p.imports.from}</h2>
+          <p class="callout-lede">
+            {p.name} reads {p.imports.from} {p.imports.what}. {p.imports.how}
+          </p>
+          <p class="fine">
+            {p.imports.from} is a separate product by its own authors. {p.name} is not affiliated with or
+            endorsed by it; the name is used only to describe the file format {p.name} can read.
+          </p>
+        </div>
+      </section>
+
+      <!-- Pricing -->
+      <section class="sheet" id="pricing" aria-labelledby="pricing-title">
+        <aside>
+          <span class="num" aria-hidden="true">03</span>
+          <span class="mono">Pricing</span>
+        </aside>
+        <div>
+          <h2 id="pricing-title">
+            {p.pro ? 'Free, or Pro once.' : 'Free. That is the whole table.'}
+          </h2>
+          <div class={`tiers ${p.pro ? 'two' : 'one'}`}>
+            <div class="tier">
+              <div class="tier-head">
+                <span class="mono">{p.free.name}</span>
+                <span class="price">{p.free.price}</span>
+                <span class="price-note">{p.free.priceNote}</span>
+              </div>
+              <ul role="list">
+                {p.free.items.map((it) => <li>{it}</li>)}
+              </ul>
+              <div class="tier-cta">
+                {
+                  store.chrome ? (
+                    <a class="btn ghost" href={store.chrome} rel="noopener">
+                      Add to Chrome
+                    </a>
+                  ) : (
+                    <span class="btn ghost" aria-disabled="true">
+                      Not yet published
+                    </span>
+                  )
+                }
+              </div>
+            </div>
+            {
+              p.pro && (
+                <div class="tier pro">
+                  <div class="tier-head">
+                    <span class="mono">{p.pro.name}</span>
+                    <span class="price">{p.pro.price}</span>
+                    <span class="price-note">{p.pro.priceNote}</span>
+                  </div>
+                  <ul role="list">
+                    {p.pro.items.map((it) => (
+                      <li>{it}</li>
+                    ))}
+                  </ul>
+                  <div class="tier-cta">
+                    {checkout ? (
+                      <a class="btn accent" href={checkout} rel="noopener">
+                        Buy {p.name} Pro
+                      </a>
+                    ) : (
+                      <span class="btn" aria-disabled="true">
+                        Available at launch
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )
+            }
+          </div>
+          <p class="fine">
+            {
+              p.pro
+                ? `Pro is a one-time purchase handled by Lemon Squeezy, with a ${REFUND_WINDOW_DAYS}-day refund window. One licence key works across all your browser profiles. The source code stays MIT-licensed. `
+                : `${p.name} has no paid tier and no licence check. It is funded by the Pro tiers of the other BrowserForge extensions. `
+            }
+            <a href={termsUrl()}>Terms and licence</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- Privacy and changelog -->
+      <section class="sheet" id="privacy" aria-labelledby="privacy-title">
+        <aside>
+          <span class="num" aria-hidden="true">04</span>
+          <span class="mono">Trust</span>
+        </aside>
+        <div>
+          <h2 id="privacy-title">Privacy and changelog</h2>
+          <ul class="trust" role="list">
+            <li>
+              <strong>Privacy policy</strong>
+              <p>
+                What {p.name} stores, which permissions it asks for and why, and the exact network calls it can
+                make.
+              </p>
+              <a href={privacyUrl(p.slug)}>Read the {p.name} privacy policy</a>
+            </li>
+            <li>
+              <strong>Changelog</strong>
+              <p>Every release is tagged on GitHub with notes on what changed.</p>
+              <a href={links.changelog} rel="noopener">Release notes for {p.name}</a>
+            </li>
+            <li>
+              <strong>Issues</strong>
+              <p>Bug reports and feature requests are tracked in the open.</p>
+              <a href={links.issues} rel="noopener">{p.name} issues on GitHub</a>
+            </li>
+            <li>
+              <strong>All BrowserForge tools</strong>
+              <p>Arbor, Reroute and CookieSweep share one repository and one set of principles.</p>
+              <a href={abs('/')}>Back to BrowserForge</a>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <Footer mode="absolute" />
+</Base>
+
+<style>
+  .hero {
+    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(2rem, 5vw, 4rem);
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .idx {
+    color: var(--c);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    margin-top: 1.75rem;
+  }
+  .hero-grid > * {
+    min-width: 0;
+  }
+  @media (min-width: 960px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 3fr) minmax(220px, 1fr);
+      gap: 3rem;
+    }
+  }
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .icon {
+    color: var(--c);
+    flex: none;
+  }
+  .tagline {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    line-height: 1.15;
+    margin-top: 1.25rem;
+    max-width: 30ch;
+    color: var(--ink-2);
+    text-wrap: balance;
+  }
+  .summary {
+    margin-top: 1.5rem;
+    max-width: 62ch;
+    color: var(--ink-2);
+    font-size: 1.0625rem;
+  }
+  .cta {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  .soon {
+    font-size: 0.7em;
+    padding: 0.2em 0.5em;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    letter-spacing: 0.1em;
+  }
+  .status-note {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--ink-3);
+  }
+
+  .toc {
+    align-self: start;
+    border-top: 1px solid var(--rule-strong);
+    padding-top: 1rem;
+  }
+  .toc ol {
+    list-style: none;
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    counter-reset: toc;
+  }
+  .toc li {
+    counter-increment: toc;
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+  .toc li::before {
+    content: counter(toc, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--c);
+  }
+  .toc a {
+    text-decoration: none;
+    font-size: 0.9375rem;
+  }
+  .toc a:hover {
+    text-decoration: underline;
+  }
+
+  .sheet .num {
+    color: var(--c);
+  }
+  .sheet h2 {
+    margin-bottom: 1.75rem;
+  }
+
+  .features {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 760px) {
+    .features {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 2.5rem;
+    }
+  }
+  .features li {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: 0.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .fi {
+    color: var(--c);
+    padding-top: 0.25rem;
+  }
+  .features strong {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .features p {
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+  }
+
+  .callout {
+    border: 1px solid var(--rule-strong);
+    border-left: 4px solid var(--c);
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    background: color-mix(in srgb, var(--paper-2) 60%, transparent);
+  }
+  .callout h2 {
+    margin-bottom: 1rem;
+  }
+  .callout-lede {
+    max-width: 62ch;
+    color: var(--ink-2);
+  }
+  .fine {
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--ink-3);
+    max-width: 70ch;
+  }
+
+  .tiers {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 720px) {
+    .tiers.two {
+      grid-template-columns: 1fr 1fr;
+    }
+    .tiers.one {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+  .tier {
+    border: 1px solid var(--rule-strong);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+  }
+  .tier.pro {
+    border-color: var(--c);
+    box-shadow: 4px 4px 0 var(--c);
+  }
+  .tier-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .price {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    line-height: 1;
+  }
+  .price-note {
+    font-size: 0.875rem;
+    color: var(--ink-3);
+  }
+  .tier ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    font-size: 0.9375rem;
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+    flex: 1;
+  }
+  .tier li {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .tier li::before {
+    content: '';
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-top: 0.5rem;
+    background: var(--c);
+    transform: rotate(45deg);
+  }
+  .trust {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem 2.5rem;
+  }
+  @media (min-width: 720px) {
+    .trust {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .trust li {
+    border-top: 1px solid var(--rule-strong);
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .trust strong {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.5rem;
+  }
+  .trust p {
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+  }
+  .trust a {
+    font-size: 0.9375rem;
+    align-self: flex-start;
+  }
+</style>

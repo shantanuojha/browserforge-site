@@ -1,0 +1,134 @@
+---
+import Mark from './Mark.astro';
+import { BRAND, CONTACT_EMAIL, GITHUB_REPO_URL, OWNER, SITE_REPO_URL } from '../config';
+import { linker, type LinkMode } from '../lib/links';
+import { productList } from '../data/products';
+
+interface Props {
+  mode?: LinkMode;
+}
+const { mode = 'relative' } = Astro.props;
+const href = linker(mode);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container grid">
+    <div class="col brand">
+      <a href={href('/')} class="brandlink" aria-label={`${BRAND} home`}>
+        <Mark size={40} variant="line" />
+      </a>
+      <p class="tag">
+        Open-source Manifest V3 browser extensions, built and maintained by {OWNER}.
+      </p>
+      <p class="tag small">
+        No analytics, no telemetry, no trackers. Not on this site, not in the extensions.
+      </p>
+    </div>
+
+    <div class="col">
+      <h2 class="mono">Products</h2>
+      <ul>
+        {
+          productList.map((p) => (
+            <li>
+              <a href={href(`/${p.slug}`)}>{p.name}</a>
+              <span class="dim"> - {p.category}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="col">
+      <h2 class="mono">Legal</h2>
+      <ul>
+        <li><a href={href('/privacy')}>Privacy policies</a></li>
+        <li><a href={href('/terms')}>Terms and licence</a></li>
+        <li><a href={href('/support')}>Support</a></li>
+      </ul>
+    </div>
+
+    <div class="col">
+      <h2 class="mono">Source</h2>
+      <ul>
+        <li><a href={GITHUB_REPO_URL} rel="noopener">github.com/shantanuojha/browserforge</a></li>
+        <li><a href={SITE_REPO_URL} rel="noopener">This website</a></li>
+        <li><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container legal">
+    <p>
+      &copy; {year} {OWNER}. Code is MIT-licensed. {BRAND} is an independent project and is not affiliated with,
+      sponsored by or endorsed by Google, Tabs Outliner, Redirector, Cookie AutoDelete or ClearURLs. Those names
+      are used only to describe compatibility: which files our extensions can import and which publicly licensed
+      rule catalog Reroute bundles. Chrome is a trademark of Google LLC.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: clamp(4rem, 8vw, 7rem);
+    background: var(--ink);
+    color: var(--paper);
+    padding-block: clamp(3rem, 6vw, 5rem) 2rem;
+    --rule: rgba(242, 238, 229, 0.16);
+    --rule-strong: rgba(242, 238, 229, 0.5);
+    --ink-3: rgba(242, 238, 229, 0.62);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem 2rem;
+  }
+  @media (min-width: 720px) {
+    .grid {
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    }
+  }
+  .brandlink {
+    color: var(--paper);
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+  .tag {
+    color: var(--ink-3);
+    max-width: 30ch;
+    font-size: 0.9375rem;
+  }
+  .tag.small {
+    font-size: 0.8125rem;
+    margin-top: 0.75rem;
+  }
+  h2.mono {
+    margin-bottom: 1rem;
+  }
+  ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    font-size: 0.9375rem;
+  }
+  a {
+    text-decoration-color: var(--rule-strong);
+  }
+  .dim {
+    color: var(--ink-3);
+    font-size: 0.875rem;
+  }
+  .legal {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  .legal p {
+    font-size: 0.8125rem;
+    color: var(--ink-3);
+    max-width: 90ch;
+    line-height: 1.6;
+  }
+</style>

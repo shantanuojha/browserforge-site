@@ -1,0 +1,121 @@
+---
+import Legal from '../layouts/Legal.astro';
+import SideNav from '../components/SideNav.astro';
+import {
+  BRAND,
+  CONTACT_EMAIL,
+  GITHUB_REPO_URL,
+  LICENCE_PROVIDER,
+  LICENCE_PROVIDER_URL,
+  OWNER,
+  REFUND_WINDOW_DAYS,
+  TERMS_EFFECTIVE_DATE,
+} from '../config';
+
+const sections = [
+  { id: 'code', label: 'The code: MIT' },
+  { id: 'pro', label: 'Pro licences' },
+  { id: 'refunds', label: 'Refunds' },
+  { id: 'warranty', label: 'Warranty and liability' },
+  { id: 'trademarks', label: 'Names and trademarks' },
+  { id: 'changes', label: 'Changes' },
+  { id: 'contact', label: 'Contact' },
+];
+---
+
+<Legal
+  title="Terms and licence"
+  description="The code is MIT. Pro is a one-time licence key. Refunds within 14 days. That is most of it; the rest is below."
+  path="/terms"
+  kicker={`${BRAND} / Terms`}
+  effective={TERMS_EFFECTIVE_DATE}
+  current="terms"
+>
+  <Fragment slot="aside">
+    <SideNav title="Sections" items={sections.map((s) => ({ href: `#${s.id}`, label: s.label }))} />
+  </Fragment>
+
+  <h2 id="code">The code: MIT</h2>
+  <p>
+    All {BRAND} extensions (Arbor, Reroute, CookieSweep) and this website are released under the
+    <a href="https://opensource.org/license/mit" rel="noopener">MIT licence</a>. The full text is in the
+    <code>LICENSE</code> file of <a href={GITHUB_REPO_URL} rel="noopener">the repository</a>. In short: you may
+    use, copy, modify, build and redistribute the code, including for commercial purposes, provided the copyright
+    and licence notice are kept. The software is provided &ldquo;as is&rdquo;, without warranty.
+  </p>
+  <p>
+    Nothing in the Pro terms below restricts what the MIT licence grants you over the code. A Pro licence is not a
+    software licence in the copyright sense; it is a key that unlocks Pro features in the official builds, and a way
+    to pay for their continued maintenance.
+  </p>
+
+  <h2 id="pro">Pro licences</h2>
+  <ul>
+    <li>
+      <strong>What you buy.</strong> A licence key for one {BRAND} extension (Arbor Pro or Reroute Pro), sold as a
+      one-time purchase. There is no subscription and no renewal.
+    </li>
+    <li>
+      <strong>Who may use it.</strong> The key is personal to the purchaser and may be activated on all browser
+      profiles and devices that the purchaser uses. Team or organisation use requires one key per person.
+    </li>
+    <li>
+      <strong>What it unlocks.</strong> The Pro features listed on the product page at the time of purchase, in the
+      official builds distributed through the Chrome Web Store and Microsoft Edge Add-ons, for all future versions of
+      that extension. If a Pro feature is later moved to the free tier, that is a gift, not a breach.
+    </li>
+    <li>
+      <strong>Activation.</strong> Keys are issued and validated by {LICENCE_PROVIDER}, our merchant of record.
+      Activation sends the key and a random instance identifier to {LICENCE_PROVIDER}; see the product&rsquo;s
+      privacy policy. If {LICENCE_PROVIDER} is unreachable, already-activated features keep working.
+    </li>
+    <li>
+      <strong>Restrictions.</strong> Do not share, resell or publish a key. Keys found in public places or used far
+      beyond a single person&rsquo;s plausible use may be deactivated after we try to contact you.
+    </li>
+    <li>
+      <strong>If the project ends.</strong> Should {BRAND} stop maintaining an extension, we will publish a final
+      release in which Pro features are unlocked for everyone. The MIT-licensed source remains available regardless.
+    </li>
+  </ul>
+
+  <h2 id="refunds">Refunds</h2>
+  <p>
+    If a Pro licence does not work for you for any reason, request a refund within {REFUND_WINDOW_DAYS} days of
+    purchase. Refunds are processed by {LICENCE_PROVIDER}: reply to your purchase receipt email, or write to
+    <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> with your order number. Refunded keys are deactivated.
+    Statutory rights in your country that go beyond this are not affected.
+  </p>
+
+  <h2 id="warranty">Warranty and liability</h2>
+  <p>
+    The extensions are provided &ldquo;as is&rdquo;. To the extent permitted by law, {OWNER} disclaims all warranties,
+    express or implied, and is not liable for any loss of data, sessions, tabs, cookies or profits arising from
+    their use. Arbor in particular manages the tabs you ask it to manage; keep backups of anything you cannot afford
+    to lose, and check the recovery screen before dismissing it. Where a jurisdiction does not allow this exclusion,
+    liability is limited to the amount you paid for the Pro licence.
+  </p>
+
+  <h2 id="trademarks">Names and trademarks</h2>
+  <p>
+    {BRAND}, Arbor, Reroute and CookieSweep are names used by {OWNER} for this project. Chrome and Google Drive are
+    trademarks of Google LLC; Edge is a trademark of Microsoft Corporation; {LICENCE_PROVIDER} is a trademark of its
+    owner. Tabs Outliner, Redirector, Cookie AutoDelete and ClearURLs are separate projects by their own authors;
+    their names appear on this site only to state, factually, which file formats our extensions can import or which
+    publicly licensed rule catalog is bundled. {BRAND} is not affiliated with, sponsored by or endorsed by any of
+    them.
+  </p>
+
+  <h2 id="changes">Changes</h2>
+  <p>
+    These terms may change. The version in effect at the time of your purchase governs that purchase. Changes are
+    published here with a new effective date and recorded in the website repository&rsquo;s history.
+  </p>
+
+  <h2 id="contact">Contact</h2>
+  <p>
+    {OWNER}<br />
+    <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a><br />
+    Payments and receipts: <a href={LICENCE_PROVIDER_URL} rel="noopener">{LICENCE_PROVIDER}</a>
+  </p>
+</Legal>

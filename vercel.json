@@ -1,0 +1,61 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "arbor.shantanuojha.com" }],
+      "destination": "/arbor"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "arbor.shantanuojha.com" }],
+      "destination": "/arbor/$1"
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "reroute.shantanuojha.com" }],
+      "destination": "/reroute"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "reroute.shantanuojha.com" }],
+      "destination": "/reroute/$1"
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "cookiesweep.shantanuojha.com" }],
+      "destination": "/cookiesweep"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "cookiesweep.shantanuojha.com" }],
+      "destination": "/cookiesweep/$1"
+    },
+    {
+      "source": "/",
+      "destination": "/home"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()" }
+      ]
+    },
+    {
+      "source": "/_astro/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/fonts/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    }
+  ]
+}

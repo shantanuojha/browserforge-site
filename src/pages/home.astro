@@ -1,0 +1,381 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import HeroDrawing from '../components/HeroDrawing.astro';
+import ProductIcon from '../components/ProductIcon.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import { BRAND, GITHUB_REPO_URL, TAGLINE } from '../config';
+import { abs } from '../lib/links';
+import { productList } from '../data/products';
+
+const canonical = abs('/');
+---
+
+<Base title={BRAND} description={TAGLINE} canonical={canonical}>
+  <Header mode="relative" current="home" />
+
+  <main id="main">
+    <!-- Hero ------------------------------------------------------------ -->
+    <section class="hero container">
+      <div class="hero-copy">
+        <p class="label reveal" style="--i: 0">Manifest V3 &middot; Chrome and Edge &middot; MIT licence</p>
+        <h1 class="reveal" style="--i: 1">
+          The open-source <em>workshop</em> that rebuilds the browser tools Manifest&nbsp;V3 left behind.
+        </h1>
+        <p class="lede reveal" style="--i: 2">
+          Three extensions, each replacing a tool that broke or was abandoned when Manifest V2 was retired.
+          Your data stays in your browser. There is no telemetry to turn off, because there is none.
+        </p>
+        <div class="cta reveal" style="--i: 3">
+          <a class="btn" href="#products">See the three tools</a>
+          <a class="btn ghost" href={GITHUB_REPO_URL} rel="noopener">Read the source</a>
+        </div>
+      </div>
+      <div class="hero-art reveal" style="--i: 2">
+        <HeroDrawing />
+      </div>
+    </section>
+
+    <!-- Facts strip ------------------------------------------------------- -->
+    <section class="facts container" aria-label="At a glance">
+      <dl>
+        <div>
+          <dt class="mono">Extensions</dt>
+          <dd>3</dd>
+        </div>
+        <div>
+          <dt class="mono">Analytics scripts</dt>
+          <dd>0</dd>
+        </div>
+        <div>
+          <dt class="mono">Servers holding your data</dt>
+          <dd>0</dd>
+        </div>
+        <div>
+          <dt class="mono">Code licence</dt>
+          <dd>MIT</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- Products ---------------------------------------------------------- -->
+    <div id="products" class="container">
+      {
+        productList.map((p) => (
+          <section class="sheet product" id={p.slug} style={`--c: var(--${p.slug})`} aria-labelledby={`${p.slug}-title`}>
+            <aside>
+              <span class="num" aria-hidden="true">
+                {p.index}
+              </span>
+              <span class="mono">{p.category}</span>
+              <StatusBadge status={p.status} note={p.statusNote} />
+              <span class="mono browsers">{p.browsers.join(' / ')}</span>
+            </aside>
+
+            <div class="body">
+              <div class="title-row">
+                <ProductIcon slug={p.slug} size={44} class="icon" />
+                <h2 id={`${p.slug}-title`}>
+                  {p.name}
+                  <span class="tagline">{p.tagline}</span>
+                </h2>
+              </div>
+              <p class="summary">{p.summary}</p>
+
+              <ul class="features" role="list">
+                {p.features.map((f) => (
+                  <li>
+                    <strong>{f.title}</strong>
+                    <span>{f.body}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div class="row">
+                <a class="btn" href={`/${p.slug}`}>
+                  {p.name} details and pricing
+                </a>
+                <a class="link" href={`/privacy/${p.slug}`}>
+                  Privacy policy
+                </a>
+                <span class="pricing mono">
+                  {p.pro ? `Free, or Pro ${p.pro.price} one-time` : 'Free, no Pro tier'}
+                </span>
+              </div>
+            </div>
+          </section>
+        ))
+      }
+    </div>
+
+    <!-- Why open source --------------------------------------------------- -->
+    <section class="sheet why container" id="why" aria-labelledby="why-title">
+      <aside>
+        <span class="num" aria-hidden="true">04</span>
+        <span class="mono">Why open source</span>
+      </aside>
+      <div class="body">
+        <h2 id="why-title">Tools you can <em>read</em>.</h2>
+        <p class="summary">
+          When Chrome retired Manifest V2, a generation of small, trusted extensions stopped working. Some were
+          rewritten. Many were abandoned, and abandoned extensions with large user bases have a habit of being
+          sold and turned into something else. BrowserForge exists so that the replacements are built in the
+          open, stay in the open, and cannot quietly change hands.
+        </p>
+        <ul class="reasons" role="list">
+          <li>
+            <strong>Auditable</strong>
+            <span>Every line that ships to the store is in the repository. Permissions are explained, per extension, in plain language.</span>
+          </li>
+          <li>
+            <strong>Local by default</strong>
+            <span>Tabs, rules, cookies and notes never leave your browser. The only network calls are the ones you opt into and can see in the privacy policy.</span>
+          </li>
+          <li>
+            <strong>Forkable</strong>
+            <span>MIT licence. If this project stops, or takes a turn you disagree with, you can keep the version you trust.</span>
+          </li>
+          <li>
+            <strong>Funded honestly</strong>
+            <span>Pro features are one-time purchases that pay for maintenance. No subscriptions, no data, no ads, no "free with sponsors".</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <Footer mode="relative" />
+</Base>
+
+<style>
+  /* Hero */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+    padding-block: clamp(3rem, 8vw, 7rem) clamp(2.5rem, 6vw, 5rem);
+    position: relative;
+  }
+  @media (min-width: 960px) {
+    .hero {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
+      gap: 3rem;
+    }
+  }
+  .hero > * {
+    min-width: 0;
+  }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .hero h1 {
+    max-width: 16ch;
+  }
+  .lede {
+    font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+    color: var(--ink-2);
+    max-width: 48ch;
+  }
+  .cta {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  .hero-art {
+    position: relative;
+    padding: 1rem;
+    min-width: 0;
+  }
+  .hero-art :global(svg) {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+  .hero-art::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, var(--rule) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse at center, #000 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 40%, transparent 80%);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* Facts */
+  .facts {
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .facts dl {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0;
+  }
+  @media (min-width: 720px) {
+    .facts dl {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .facts div {
+    padding: 1.25rem 1rem 1.25rem 0;
+    border-left: 1px solid var(--rule);
+    padding-left: 1rem;
+  }
+  .facts div:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+  @media (max-width: 719px) {
+    .facts div:nth-child(3) {
+      border-left: 0;
+      padding-left: 0;
+      border-top: 1px solid var(--rule);
+    }
+    .facts div:nth-child(4) {
+      border-top: 1px solid var(--rule);
+    }
+  }
+  .facts dd {
+    margin: 0.35rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    line-height: 1;
+  }
+
+  /* Product sheets */
+  .product .num {
+    color: var(--c);
+  }
+  .browsers {
+    color: var(--ink-3);
+  }
+  .title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+  .icon {
+    color: var(--c);
+    flex: none;
+    margin-top: 0.4rem;
+  }
+  .product h2 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .tagline {
+    font-family: var(--font-body);
+    font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+    color: var(--ink-2);
+    letter-spacing: 0;
+    line-height: 1.4;
+    max-width: 44ch;
+    text-wrap: pretty;
+  }
+  .summary {
+    margin-top: 1.5rem;
+    max-width: 66ch;
+    color: var(--ink-2);
+  }
+  .features {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 2.25rem;
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 640px) {
+    .features {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 2rem;
+    }
+  }
+  @media (min-width: 1100px) {
+    .features {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .features li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.9375rem;
+    color: var(--ink-2);
+    position: relative;
+  }
+  .features li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -1px;
+    width: 0;
+    height: 1px;
+    background: var(--c);
+    transition: width 420ms var(--ease-out);
+  }
+  .features li:hover::before {
+    width: 100%;
+  }
+  .features strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  .row .link {
+    font-size: 0.9375rem;
+  }
+  .pricing {
+    margin-left: auto;
+  }
+
+  /* Why */
+  .why {
+    border-bottom: 1px solid var(--rule);
+  }
+  .reasons {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem 2rem;
+    margin-top: 2.25rem;
+  }
+  @media (min-width: 720px) {
+    .reasons {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .reasons li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule-strong);
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+  }
+  .reasons strong {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.5rem;
+  }
+</style>

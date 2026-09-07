@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { BRAND } from '../config';
+import { abs } from '../lib/links';
+import { productList } from '../data/products';
+
+/**
+ * Served on every host (Vercel serves 404.html for unmatched paths), so all
+ * links here are absolute.
+ */
+---
+
+<Base title="Page not found" description="There is nothing at this address." canonical={abs('/404')} noindex>
+  <Header mode="absolute" />
+  <main id="main" class="container nf">
+    <p class="label reveal" style="--i: 0">Error 404</p>
+    <h1 class="reveal" style="--i: 1">Nothing is <em>filed</em> here.</h1>
+    <p class="lede reveal" style="--i: 2">
+      The address may have been mistyped, or the page moved. Everything on this site is one of the pages below.
+    </p>
+    <ul class="links reveal" style="--i: 3" role="list">
+      <li><a href={abs('/')}>{BRAND} home</a></li>
+      {productList.map((p) => <li><a href={abs(`/${p.slug}`)}>{p.name}</a></li>)}
+      <li><a href={abs('/privacy')}>Privacy policies</a></li>
+      <li><a href={abs('/terms')}>Terms and licence</a></li>
+      <li><a href={abs('/support')}>Support</a></li>
+    </ul>
+  </main>
+  <Footer mode="absolute" />
+</Base>
+
+<style>
+  .nf {
+    padding-block: clamp(4rem, 10vw, 8rem) 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-height: 50vh;
+  }
+  .lede {
+    color: var(--ink-2);
+    font-size: 1.125rem;
+  }
+  .links {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.75rem;
+    margin-top: 1rem;
+    font-size: 0.9375rem;
+  }
+</style>

@@ -1,0 +1,49 @@
+---
+import { STATUS_LABEL, type Status } from '../data/products';
+
+interface Props {
+  status: Status;
+  note?: string;
+}
+const { status, note } = Astro.props;
+---
+
+<span class={`status status-${status}`} title={note}>
+  <span class="dot" aria-hidden="true"></span>
+  {STATUS_LABEL[status]}
+</span>
+
+<style>
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink-2);
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem 0.35rem 0.6rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .status-in-development .dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(216, 74, 27, 0.18);
+  }
+  .status-beta .dot {
+    background: var(--reroute);
+  }
+  .status-released .dot {
+    background: var(--arbor);
+  }
+</style>

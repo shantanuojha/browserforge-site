@@ -1,0 +1,135 @@
+---
+import Legal from '../../layouts/Legal.astro';
+import ProductIcon from '../../components/ProductIcon.astro';
+import { BRAND, PRIVACY_EFFECTIVE_DATE, PRIVACY_EMAIL } from '../../config';
+import { productList } from '../../data/products';
+---
+
+<Legal
+  title="Privacy"
+  description={`One policy per extension, each written for what that extension actually does. The common thread: data stays in your browser, and there is no telemetry.`}
+  path="/privacy"
+  kicker={`${BRAND} / Privacy`}
+  effective={PRIVACY_EFFECTIVE_DATE}
+  current="privacy"
+>
+  <Fragment slot="aside">
+    <div class="principles">
+      <span class="mono">Applies to every extension</span>
+      <ul>
+        <li>No analytics or telemetry</li>
+        <li>No BrowserForge servers</li>
+        <li>No accounts</li>
+        <li>No data sold or shared</li>
+        <li>Uninstall deletes everything</li>
+      </ul>
+    </div>
+  </Fragment>
+
+  <h2>Policies</h2>
+  <ul class="policies" role="list">
+    {
+      productList.map((p) => (
+        <li style={`--c: var(--${p.slug})`}>
+          <a href={`/privacy/${p.slug}`} class="card">
+            <ProductIcon slug={p.slug} size={36} class="icon" />
+            <span class="name">{p.name} privacy policy</span>
+            <span class="desc">
+              {p.privacy.network.length === 1 && p.slug === 'cookiesweep'
+                ? 'No network requests at all.'
+                : p.slug === 'arbor'
+                  ? 'Optional licence check and optional Google Drive backup; everything else local.'
+                  : 'Optional licence check; rule lists ship inside the extension.'}
+            </span>
+            <span class="mono go">Read</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>This website</h2>
+  <p>
+    The {BRAND} pages on shantanuojha.com and its subdomains are static files. They set no cookies, load no
+    third-party scripts, fonts or images, and include no analytics. The site is hosted on Vercel, whose servers
+    process request metadata (IP address, user agent, requested URL) to deliver pages and protect the service; we
+    do not enable Vercel&rsquo;s analytics or speed-insights products.
+  </p>
+
+  <h2>Questions</h2>
+  <p>
+    Write to <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a>. If you find behaviour in an extension that
+    does not match its policy, please treat it as a bug and report it; the policies are meant to be checkable
+    against the source.
+  </p>
+</Legal>
+
+<style>
+  .principles {
+    border-top: 1px solid var(--rule-strong);
+    padding-top: 0.9rem;
+  }
+  .principles ul {
+    list-style: none;
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    color: var(--ink-2);
+  }
+  .principles li::before {
+    content: '';
+    display: inline-block;
+    width: 0.45rem;
+    height: 0.45rem;
+    background: var(--accent);
+    transform: rotate(45deg);
+    margin-right: 0.7rem;
+  }
+  .policies {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      'icon name go'
+      'icon desc go';
+    gap: 0.25rem 1.25rem;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--rule-strong);
+    border-left: 4px solid var(--c);
+    text-decoration: none;
+    transition: background 180ms ease, transform 180ms var(--ease-out);
+  }
+  .card:hover {
+    background: color-mix(in srgb, var(--paper-2) 70%, transparent);
+    transform: translateX(2px);
+  }
+  .icon {
+    grid-area: icon;
+    color: var(--c);
+  }
+  .name {
+    grid-area: name;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.1;
+  }
+  .desc {
+    grid-area: desc;
+    font-size: 0.9rem;
+    color: var(--ink-2);
+  }
+  .go {
+    grid-area: go;
+    color: var(--c);
+  }
+</style>

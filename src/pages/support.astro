@@ -1,0 +1,143 @@
+---
+import Legal from '../layouts/Legal.astro';
+import ProductIcon from '../components/ProductIcon.astro';
+import { BRAND, CONTACT_EMAIL, GITHUB_REPO_URL, NEW_ISSUE_URL, PRODUCT_LINKS } from '../config';
+import { productList } from '../data/products';
+---
+
+<Legal
+  title="Support"
+  description="Bugs and feature requests go on GitHub, where everyone can see them. Licence, refund and private matters go to email."
+  path="/support"
+  kicker={`${BRAND} / Support`}
+  current="support"
+>
+  <Fragment slot="aside">
+    <div class="quick">
+      <span class="mono">Before you file</span>
+      <ul>
+        <li>Note the extension version (chrome://extensions)</li>
+        <li>Note your browser and version</li>
+        <li>Say what you expected and what happened</li>
+        <li>Attach an export if it helps (check it for private URLs first)</li>
+      </ul>
+    </div>
+  </Fragment>
+
+  <h2>Issues by product</h2>
+  <ul class="products" role="list">
+    {
+      productList.map((p) => (
+        <li style={`--c: var(--${p.slug})`}>
+          <div class="head">
+            <ProductIcon slug={p.slug} size={32} class="icon" />
+            <span class="name">{p.name}</span>
+          </div>
+          <div class="links">
+            <a href={PRODUCT_LINKS[p.slug].issues} rel="noopener">
+              Open issues
+            </a>
+            <a href={`${NEW_ISSUE_URL}`} rel="noopener">
+              New issue
+            </a>
+            <a href={PRODUCT_LINKS[p.slug].changelog} rel="noopener">
+              Release notes
+            </a>
+            <a href={`/privacy/${p.slug}`}>Privacy policy</a>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="fine">
+    All three extensions share one repository, <a href={GITHUB_REPO_URL} rel="noopener">shantanuojha/browserforge</a>.
+    When you open an issue, pick the template for the extension it concerns so it gets the right label.
+  </p>
+
+  <h2>Email</h2>
+  <p>
+    <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+  </p>
+  <p>
+    Use email for licence keys, refunds, security reports you would rather not post publicly, and anything that
+    includes private data. This is a one-person project; expect a reply within a few days, not a few minutes.
+  </p>
+
+  <h2>Security reports</h2>
+  <p>
+    If you find a vulnerability in an extension or on this site, email the address above with
+    &ldquo;security&rdquo; in the subject. Please give us reasonable time to publish a fix before disclosing it.
+  </p>
+</Legal>
+
+<style>
+  .quick {
+    border-top: 1px solid var(--rule-strong);
+    padding-top: 0.9rem;
+  }
+  .quick ul {
+    list-style: none;
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--ink-2);
+    counter-reset: q;
+  }
+  .quick li {
+    counter-increment: q;
+    display: flex;
+    gap: 0.75rem;
+  }
+  .quick li::before {
+    content: counter(q, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--ink-3);
+    padding-top: 0.2rem;
+  }
+  .products {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--rule-strong);
+  }
+  .products li {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem 2rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--rule);
+    margin: 0;
+  }
+  @media (min-width: 640px) {
+    .products li {
+      grid-template-columns: 200px 1fr;
+      align-items: center;
+    }
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .icon {
+    color: var(--c);
+  }
+  .name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+  .fine {
+    font-size: 0.9rem;
+    color: var(--ink-3);
+  }
+</style>

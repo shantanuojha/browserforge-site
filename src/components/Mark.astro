@@ -1,0 +1,45 @@
+---
+/** The BrowserForge mark: an anvil with a single spark. */
+interface Props {
+  size?: number;
+  class?: string;
+  /** `plate` draws the anvil on an ink tile; `line` draws only the anvil in currentColor. */
+  variant?: 'plate' | 'line';
+}
+const { size = 28, class: className = '', variant = 'plate' } = Astro.props;
+---
+
+{
+  variant === 'plate' ? (
+    <svg
+      class={className}
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <rect width="32" height="32" rx="6" fill="var(--ink)" />
+      <path
+        d="M2 12.5 L7 10 H26 L28 12.5 L26 15 H20 V23 H23 L25 27 H7 L9 23 H12 V15 H7 Z"
+        fill="var(--paper)"
+      />
+      <circle cx="25" cy="6" r="2" fill="var(--accent)" />
+    </svg>
+  ) : (
+    <svg
+      class={className}
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M2 12.5 L7 10 H26 L28 12.5 L26 15 H20 V23 H23 L25 27 H7 L9 23 H12 V15 H7 Z"
+        fill="currentColor"
+      />
+      <circle cx="25" cy="6" r="2" fill="var(--accent)" />
+    </svg>
+  )
+}
