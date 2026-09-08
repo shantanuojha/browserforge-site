@@ -1,6 +1,11 @@
 import type { ProductSlug } from '../config';
 
-export type Status = 'in-development' | 'beta' | 'released';
+/**
+ * Where the extension is in the Chrome Web Store pipeline.
+ * `coming-soon`: not yet submitted. `in-review`: submitted, awaiting review.
+ * `released`: listed and installable (`STORE_URLS.<slug>.chrome` must be set).
+ */
+export type Status = 'coming-soon' | 'in-review' | 'beta' | 'released';
 
 export interface Feature {
   title: string;
@@ -41,6 +46,12 @@ export interface Product {
   features: Feature[];
   free: Tier;
   pro: Tier | null;
+  /**
+   * Features that are planned but not shipped in any tier. Shown as a small
+   * "Planned" line under the pricing cards so they are never mistaken for
+   * something a Pro purchase unlocks today.
+   */
+  planned?: string[];
   imports: ImportSource;
   /** Privacy-policy specific content. */
   privacy: {
@@ -52,9 +63,18 @@ export interface Product {
 }
 
 export const STATUS_LABEL: Record<Status, string> = {
-  'in-development': 'In development',
+  'coming-soon': 'Coming soon',
+  'in-review': 'In review',
   beta: 'Beta',
   released: 'Released',
+};
+
+/** Label for the disabled install button while there is no store listing yet. */
+export const STORE_PENDING_LABEL: Record<Status, string> = {
+  'coming-soon': 'Coming soon',
+  'in-review': 'In review',
+  beta: 'Beta',
+  released: 'Not yet listed',
 };
 
 const LICENCE_NETWORK =
@@ -69,8 +89,8 @@ export const products: Record<ProductSlug, Product> = {
     tagline: 'Your windows and tabs as a tree. Every branch saved, every session recoverable.',
     summary:
       'Arbor keeps a live tree of your windows and tabs in the browser side panel. Close a branch and it stays in the tree until you want it back. Snapshots are written continuously, so a crash or a forced restart never costs you a session.',
-    status: 'in-development',
-    statusNote: 'Not yet on the Chrome Web Store. Source is public; builds are for testing only.',
+    status: 'released',
+    statusNote: 'Published on the Chrome Web Store. Also works in Edge: install from the same listing.',
     browsers: ['Chrome', 'Edge'],
     features: [
       {
@@ -115,13 +135,15 @@ export const products: Record<ProductSlug, Product> = {
       price: '$15',
       priceNote: 'One-time payment, no subscription',
       items: [
-        'Scheduled local backups',
-        'Google Drive backup to your own account',
-        'Keyboard and clipboard power features',
+        'Scheduled local backups: the whole tree exported every N minutes, kept as a rolling set of copies',
         'Licence valid across all your browser profiles',
         'Everything in Free',
       ],
     },
+    planned: [
+      'Google Drive backup to your own account',
+      'Keyboard and clipboard power features (multi-select, cut and paste subtrees, copy as Markdown)',
+    ],
     imports: {
       from: 'Tabs Outliner',
       what: 'backup files (.tree)',
@@ -169,8 +191,9 @@ export const products: Record<ProductSlug, Product> = {
     tagline: 'Rewrite URLs on the way in. Wildcards, regular expressions, and a rule tester that tells the truth.',
     summary:
       'Reroute redirects and rewrites URLs before they load. Write rules with wildcards or regular expressions, use capture groups and transforms, and check each rule against sample URLs before you turn it on. A built-in cleaner strips tracking parameters using the ClearURLs rule catalog shipped inside the extension.',
-    status: 'in-development',
-    statusNote: 'Not yet on the Chrome Web Store. Source is public; builds are for testing only.',
+    status: 'in-review',
+    statusNote:
+      'Submitted to the Chrome Web Store and awaiting review. Source is public; builds are for testing only.',
     browsers: ['Chrome', 'Edge'],
     features: [
       {
@@ -264,8 +287,8 @@ export const products: Record<ProductSlug, Product> = {
     tagline: 'Leave a site, and its cookies leave with you.',
     summary:
       'CookieSweep deletes cookies and site data when you leave a site or close a tab, unless the site is on your whitelist. It understands partitioned cookies, clears localStorage, IndexedDB and cache alongside cookies, and keeps a local activity log so you can see exactly what was removed.',
-    status: 'in-development',
-    statusNote: 'Not yet on the Chrome Web Store. Source is public; builds are for testing only.',
+    status: 'coming-soon',
+    statusNote: 'Not yet submitted to the Chrome Web Store. Source is public; builds are for testing only.',
     browsers: ['Chrome', 'Edge'],
     features: [
       {

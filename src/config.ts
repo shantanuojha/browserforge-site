@@ -73,22 +73,41 @@ export const PRIVACY_URLS: Record<ProductSlug, string> = {
 };
 
 /**
- * Store listing URLs. PLACEHOLDERS: replace with the real Chrome Web Store
- * and Edge Add-ons listing URLs once the extensions are published. While the
- * value is `null` the "Add to Chrome" button renders as a disabled
- * "not yet published" control.
+ * Store listing URLs. While a value is `null` the "Add to Chrome" button
+ * renders as a disabled control labelled from the product's `status`
+ * ("In review" / "Coming soon"). Edge users install from the Chrome Web Store;
+ * `edge` stays `null` unless a separate Edge Add-ons listing exists.
  */
 export const STORE_URLS: Record<ProductSlug, { chrome: string | null; edge: string | null }> = {
-  arbor: { chrome: null, edge: null },
+  arbor: {
+    chrome: 'https://chromewebstore.google.com/detail/bchjeadfoipoeiiofffdeifecphcmhge',
+    edge: null,
+  },
   reroute: { chrome: null, edge: null },
   cookiesweep: { chrome: null, edge: null },
 };
 
-/** Lemon Squeezy checkout URLs for Pro licences. PLACEHOLDERS. */
+/**
+ * Lemon Squeezy checkout links (`buy_now_url` of each Pro product on the
+ * `browserforge.lemonsqueezy.com` storefront).
+ */
+export const ARBOR_CHECKOUT_URL =
+  'https://browserforge.lemonsqueezy.com/checkout/buy/57c6e6d6-8be1-42d9-943e-e05f7d556191';
+export const REROUTE_CHECKOUT_URL =
+  'https://browserforge.lemonsqueezy.com/checkout/buy/155e7615-3e23-4f18-8a82-9ec1208548d9';
+
 export const CHECKOUT_URLS: Partial<Record<ProductSlug, string | null>> = {
-  arbor: null,
-  reroute: null,
+  arbor: ARBOR_CHECKOUT_URL,
+  reroute: REROUTE_CHECKOUT_URL,
 };
+
+/**
+ * Whether Pro purchases are open. Flip to `true` once the Lemon Squeezy store
+ * is out of test mode and approved; until then real cards would be declined,
+ * so the Pro button is rendered disabled ("Pro opens soon") and the checkout
+ * links above are not exposed.
+ */
+export const PRO_SALES_LIVE = false;
 
 /** Per-product source, issues and changelog links. */
 export const PRODUCT_LINKS: Record<

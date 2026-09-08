@@ -4,9 +4,9 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ProductIcon from '../components/ProductIcon.astro';
 import StatusBadge from '../components/StatusBadge.astro';
-import { CHECKOUT_URLS, PRODUCT_LINKS, REFUND_WINDOW_DAYS, STORE_URLS } from '../config';
+import { CHECKOUT_URLS, PRO_SALES_LIVE, PRODUCT_LINKS, REFUND_WINDOW_DAYS, STORE_URLS } from '../config';
 import { abs, privacyUrl, productHome, termsUrl } from '../lib/links';
-import type { Product } from '../data/products';
+import { STORE_PENDING_LABEL, type Product } from '../data/products';
 
 /**
  * Product pages are served from their own host (`arbor.shantanuojha.com/`);
@@ -19,8 +19,12 @@ interface Props {
 const { product: p } = Astro.props;
 
 const store = STORE_URLS[p.slug];
-const checkout = CHECKOUT_URLS[p.slug] ?? null;
+/** Pro checkout link, exposed only once sales are live (see `PRO_SALES_LIVE`). */
+const checkout = PRO_SALES_LIVE ? (CHECKOUT_URLS[p.slug] ?? null) : null;
 const links = PRODUCT_LINKS[p.slug];
+const pendingLabel = STORE_PENDING_LABEL[p.status];
+/** Edge users install from the Chrome Web Store listing unless there is a separate Edge listing. */
+const edgeViaChrome = Boolean(store.chrome) && !store.edge && p.browsers.includes('Edge');
 const canonical = productHome(p.slug);
 const description = `${p.name}: ${p.category.toLowerCase()} for Chrome and Edge. ${p.tagline}`;
 ---
@@ -53,19 +57,19 @@ const description = `${p.name}: ${p.category.toLowerCase()} for Chrome and Edge.
           <div class="cta reveal" style="--i: 4">
             {
               store.chrome ? (
-                <a class="btn accent" href={store.chrome} rel="noopener">
+                <a class="btn accent" href={store.chrome} target="_blank" rel="noopener noreferrer">
                   Add to Chrome
                 </a>
               ) : (
-                <span class="btn" aria-disabled="true" title="Not yet published to the Chrome Web Store">
+                <span class="btn" aria-disabled="true" title={p.statusNote}>
                   Add to Chrome
-                  <span class="soon">soon</span>
+                  <span class="soon">{pendingLabel}</span>
                 </span>
               )
             }
             {
               store.edge ? (
-                <a class="btn ghost" href={store.edge} rel="noopener">
+                <a class="btn ghost" href={store.edge} target="_blank" rel="noopener noreferrer">
                   Add to Edge
                 </a>
               ) : null
@@ -129,7 +133,8 @@ const description = `${p.name}: ${p.category.toLowerCase()} for Chrome and Edge.
         </div>
       </section>
 
-      <!-- Pricing -->
+      <!-- Pricing. `#pro` is the anchor the extensions link to (e.g. arbor.shantanuojha.com/#pro). -->
+      <div id="pro" class="anchor" aria-hidden="true"></div>
       <section class="sheet" id="pricing" aria-labelledby="pricing-title">
         <aside>
           <span class="num" aria-hidden="true">03</span>
@@ -152,15 +157,16 @@ const description = `${p.name}: ${p.category.toLowerCase()} for Chrome and Edge.
               <div class="tier-cta">
                 {
                   store.chrome ? (
-                    <a class="btn ghost" href={store.chrome} rel="noopener">
+                    <a class="btn ghost" href={store.chrome} target="_blank" rel="noopener noreferrer">
                       Add to Chrome
                     </a>
                   ) : (
-                    <span class="btn ghost" aria-disabled="true">
-                      Not yet published
+                    <span class="btn ghost" aria-disabled="true" title={p.statusNote}>
+                      {pendingLabel}
                     </span>
                   )
                 }
+                {edgeViaChrome && <p class="tier-note">Also works in Edge: install from the same Chrome Web Store listing.</p>}
               </div>
             </div>
             {
@@ -178,19 +184,30 @@ const description = `${p.name}: ${p.category.toLowerCase()} for Chrome and Edge.
                   </ul>
                   <div class="tier-cta">
                     {checkout ? (
-                      <a class="btn accent" href={checkout} rel="noopener">
-                        Buy {p.name} Pro
+                      <a class="btn accent" href={checkout} target="_blank" rel="noopener noreferrer">
+                        Buy Pro &mdash; {p.pro.price}
                       </a>
                     ) : (
-                      <span class="btn" aria-disabled="true">
-                        Available at launch
-                      </span>
+                      <>
+                        <span class="btn" aria-disabled="true" title="Payments are in final setup">
+                          Pro opens soon
+                        </span>
+                        <p class="tier-note">Payments are in final setup.</p>
+                      </>
                     )}
                   </div>
                 </div>
               )
             }
           </div>
+          {
+            p.planned && p.planned.length > 0 && (
+              <p class="planned">
+                <span class="mono">Planned</span>
+                <span>{p.planned.join('; ')}. Not part of Pro today; buying Pro does not unlock them.</span>
+              </p>
+            )
+          }
           <p class="fine">
             {
               p.pro
@@ -347,11 +364,19 @@ const description = `${p.name}: ${p.category.toLowerCase()} for Chrome and Edge.
     text-decoration: underline;
   }
 
+  .sheet {
+    scroll-margin-top: 4.5rem;
+  }
   .sheet .num {
     color: var(--c);
   }
   .sheet h2 {
     margin-bottom: 1.75rem;
+  }
+  /* Zero-height anchor target (`#pro`) that lands at the top of the pricing section. */
+  .anchor {
+    height: 0;
+    scroll-margin-top: 4.5rem;
   }
 
   .features {
@@ -468,6 +493,31 @@ const description = `${p.name}: ${p.category.toLowerCase()} for Chrome and Edge.
     margin-top: 0.5rem;
     background: var(--c);
     transform: rotate(45deg);
+  }
+  .tier-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .tier-note {
+    font-size: 0.8125rem;
+    color: var(--ink-3);
+  }
+  .planned {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.875rem;
+    color: var(--ink-2);
+    max-width: 70ch;
+  }
+  .planned .mono {
+    flex: none;
+    color: var(--c);
   }
   .trust {
     list-style: none;
