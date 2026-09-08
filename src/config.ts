@@ -48,9 +48,10 @@ export type ProductSlug = 'arbor' | 'reroute' | 'cookiesweep';
 export const PRODUCT_SLUGS: readonly ProductSlug[] = ['arbor', 'reroute', 'cookiesweep'];
 
 /**
- * Product hostnames. Each product page is served both at
- * `https://${LANDING_HOST}/${slug}` and at its own subdomain via the host
- * rewrites in `vercel.json`.
+ * Product hostnames. Each product page is canonical at its own subdomain. The
+ * page is built as `/${slug}` on the landing host only so the host rewrite in
+ * `vercel.json` has a file to serve; `https://${LANDING_HOST}/${slug}` itself
+ * is permanently redirected to the subdomain.
  */
 export const PRODUCT_HOSTS: Record<ProductSlug, string> = {
   arbor: `arbor.${ROOT_DOMAIN}`,

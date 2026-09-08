@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { BRAND } from '../config';
-import { abs } from '../lib/links';
+import { abs, productHome } from '../lib/links';
 import { productList } from '../data/products';
 
 /**
@@ -22,7 +22,7 @@ import { productList } from '../data/products';
     </p>
     <ul class="links reveal" style="--i: 3" role="list">
       <li><a href={abs('/')}>{BRAND} home</a></li>
-      {productList.map((p) => <li><a href={abs(`/${p.slug}`)}>{p.name}</a></li>)}
+      {productList.map((p) => <li><a href={productHome(p.slug)}>{p.name}</a></li>)}
       <li><a href={abs('/privacy')}>Privacy policies</a></li>
       <li><a href={abs('/terms')}>Terms and licence</a></li>
       <li><a href={abs('/support')}>Support</a></li>

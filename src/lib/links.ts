@@ -6,12 +6,13 @@ import { LANDING_HOST, PRODUCT_HOSTS, SITE_URL, type ProductSlug } from '../conf
  * The site is static and one deployment answers for several hostnames:
  *
  *   https://shantanuojha.com/            landing, /privacy, /terms, /support
- *   https://shantanuojha.com/arbor       product page (also reachable at ...)
- *   https://arbor.shantanuojha.com/      ...its own host, via a Vercel rewrite
+ *   https://arbor.shantanuojha.com/      product page, canonical; a Vercel
+ *                                        rewrite serves the built `/arbor` file
  *
- * A product page therefore cannot know at build time which host it is being
- * served from, so any link that leaves the page must be an absolute URL on
- * the landing host. Only in-page anchors (`#pricing`) may be relative.
+ * `https://shantanuojha.com/arbor` is permanently redirected to the subdomain
+ * by `vercel.json`, so it must never be linked to. Product pages are served
+ * from their own host, so any link that leaves the page must be an absolute
+ * URL on the landing host. Only in-page anchors (`#pricing`) may be relative.
  */
 
 /** Absolute URL on the landing host, e.g. `abs('/privacy/arbor')`. */
@@ -20,14 +21,13 @@ export function abs(path = '/'): string {
   return clean === '/' ? `${SITE_URL}/` : `${SITE_URL}${clean.replace(/\/+$/, '')}`;
 }
 
-/** Canonical URL of a product's own host, e.g. `https://arbor.shantanuojha.com/`. */
+/**
+ * Canonical URL of a product page, e.g. `https://arbor.shantanuojha.com/`.
+ * Use this for every link to a product; the landing-host path `/arbor` only
+ * exists as the rewrite target and redirects here.
+ */
 export function productHome(slug: ProductSlug): string {
   return `https://${PRODUCT_HOSTS[slug]}/`;
-}
-
-/** Path of a product page on the landing host, e.g. `/arbor`. */
-export function productPath(slug: ProductSlug): string {
-  return `/${slug}`;
 }
 
 /** Absolute URL of a product's privacy policy on the landing host. */

@@ -1,7 +1,7 @@
 ---
 import Mark from './Mark.astro';
 import { BRAND, GITHUB_REPO_URL } from '../config';
-import { linker, type LinkMode } from '../lib/links';
+import { linker, productHome, type LinkMode } from '../lib/links';
 import { productList, type Product } from '../data/products';
 
 interface Props {
@@ -36,7 +36,7 @@ const href = linker(mode);
           productList.map((p) => (
             <li>
               <a
-                href={href(`/${p.slug}`)}
+                href={productHome(p.slug)}
                 aria-current={current === p.slug ? 'page' : undefined}
                 style={`--c: var(--${p.slug})`}
               >

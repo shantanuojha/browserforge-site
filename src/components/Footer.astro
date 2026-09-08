@@ -1,7 +1,7 @@
 ---
 import Mark from './Mark.astro';
 import { BRAND, CONTACT_EMAIL, GITHUB_REPO_URL, OWNER, SITE_REPO_URL } from '../config';
-import { linker, type LinkMode } from '../lib/links';
+import { linker, productHome, type LinkMode } from '../lib/links';
 import { productList } from '../data/products';
 
 interface Props {
@@ -32,7 +32,7 @@ const year = new Date().getFullYear();
         {
           productList.map((p) => (
             <li>
-              <a href={href(`/${p.slug}`)}>{p.name}</a>
+              <a href={productHome(p.slug)}>{p.name}</a>
               <span class="dim"> - {p.category}</span>
             </li>
           ))

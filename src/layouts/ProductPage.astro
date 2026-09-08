@@ -9,9 +9,9 @@ import { abs, privacyUrl, productHome, termsUrl } from '../lib/links';
 import type { Product } from '../data/products';
 
 /**
- * Product pages are served from two hosts (landing host `/arbor` and
- * `arbor.shantanuojha.com/`). Every outbound link here is therefore an
- * absolute URL; only `#anchors` are relative.
+ * Product pages are served from their own host (`arbor.shantanuojha.com/`);
+ * the landing-host path `/arbor` redirects there. Every outbound link here is
+ * therefore an absolute URL; only `#anchors` are relative.
  */
 interface Props {
   product: Product;

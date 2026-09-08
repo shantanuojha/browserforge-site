@@ -3,6 +3,50 @@
   "framework": "astro",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.shantanuojha.com" }],
+      "destination": "https://shantanuojha.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/arbor",
+      "has": [{ "type": "host", "value": "shantanuojha.com" }],
+      "destination": "https://arbor.shantanuojha.com/",
+      "permanent": true
+    },
+    {
+      "source": "/arbor/:path*",
+      "has": [{ "type": "host", "value": "shantanuojha.com" }],
+      "destination": "https://arbor.shantanuojha.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/reroute",
+      "has": [{ "type": "host", "value": "shantanuojha.com" }],
+      "destination": "https://reroute.shantanuojha.com/",
+      "permanent": true
+    },
+    {
+      "source": "/reroute/:path*",
+      "has": [{ "type": "host", "value": "shantanuojha.com" }],
+      "destination": "https://reroute.shantanuojha.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/cookiesweep",
+      "has": [{ "type": "host", "value": "shantanuojha.com" }],
+      "destination": "https://cookiesweep.shantanuojha.com/",
+      "permanent": true
+    },
+    {
+      "source": "/cookiesweep/:path*",
+      "has": [{ "type": "host", "value": "shantanuojha.com" }],
+      "destination": "https://cookiesweep.shantanuojha.com/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/",

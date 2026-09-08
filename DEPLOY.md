@@ -28,7 +28,9 @@ cookiesweep.shantanuojha.com
 
 Leave every domain pointing at the production branch (`main`). Do **not** set any of them to redirect to another; the `vercel.json` rewrites need each host to be served directly.
 
-If Vercel offers to add `www.shantanuojha.com` as a redirect to the apex, accept it; it does not interfere.
+If Vercel offers to add `www.shantanuojha.com` as a redirect to the apex, accept it; `vercel.json` also carries a `www` -> apex redirect, so either works.
+
+Each product has one canonical URL, its subdomain. `vercel.json` permanently redirects (308) `shantanuojha.com/arbor` and `/arbor/*` (and likewise for `reroute` and `cookiesweep`) to the subdomain; the redirects only match the apex host, so they never interfere with the host rewrites that serve the subdomains. `/privacy/*`, `/terms` and `/support` stay on the apex.
 
 ## 3. DNS at the registrar
 
@@ -54,7 +56,7 @@ After DNS resolves, check each of these:
 
 ```
 https://shantanuojha.com/                   landing page
-https://shantanuojha.com/arbor              product page (same content as the subdomain)
+https://shantanuojha.com/arbor              308 -> https://arbor.shantanuojha.com/
 https://arbor.shantanuojha.com/             Arbor product page
 https://reroute.shantanuojha.com/           Reroute product page
 https://cookiesweep.shantanuojha.com/       CookieSweep product page
