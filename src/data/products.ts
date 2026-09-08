@@ -78,7 +78,7 @@ export const STORE_PENDING_LABEL: Record<Status, string> = {
 };
 
 const LICENCE_NETWORK =
-  'Optional Pro licence activation. When you enter a licence key, the extension sends the key and a random instance identifier to the Lemon Squeezy licence API to activate and later re-validate it. Nothing else is sent. The response (valid or not, and the licence expiry if any) is stored locally as an entitlement flag.';
+  'Optional Pro licence activation. When you enter a licence key, the extension sends the key and a random instance identifier to the Lemon Squeezy licence API (api.lemonsqueezy.com) to activate it, and about once a week afterwards to re-validate it. Nothing else is sent. The response (valid or not, and the licence expiry if any) is stored locally as an entitlement flag.';
 
 export const products: Record<ProductSlug, Product> = {
   arbor: {
@@ -159,25 +159,22 @@ export const products: Record<ProductSlug, Product> = {
       ],
       network: [
         LICENCE_NETWORK,
-        'Optional Google Drive backup (Pro). If you turn it on, Arbor asks Chrome for a Google OAuth token via chrome.identity with the drive.file scope. That scope only grants access to files Arbor itself creates. Backup files are uploaded directly from your browser to your own Google Drive; they never pass through a BrowserForge server, because there is none. You can disconnect at any time from the Arbor settings page or from your Google account permissions page, after which Arbor holds no token.',
+        'Scheduled local backups (Pro) never leave your computer. Each backup is a full export of the tree kept in the extension\u2019s own local storage as a rolling set of copies, and you can save any of them as an ordinary file from the Arbor options page. No upload is involved.',
+        'Google Drive backup is not part of the current version. It is planned for a future release. If it ships, it will be off by default, will request the identity permission only when you turn it on, and will use the drive.file scope, which grants access solely to the backup files Arbor itself creates in your own Drive. This policy will be updated before that version is published.',
         'No other network requests are made. Arbor does not fetch favicons from third parties; it uses the favicon Chrome already has.',
       ],
       permissions: [
         { name: 'tabs', kind: 'permission', why: 'Read the URL and title of each tab and react to tabs opening, moving and closing so the tree stays current.' },
-        { name: 'tabGroups', kind: 'permission', why: 'Show tab groups in the tree and keep group colours and names in saved sessions.' },
+        { name: 'storage', kind: 'permission', why: 'Store settings and the licence entitlement flag locally (chrome.storage.local).' },
+        { name: 'unlimitedStorage', kind: 'permission', why: 'Large trees, snapshot histories and scheduled backups can exceed the default storage quota.' },
         { name: 'sidePanel', kind: 'permission', why: 'Display the tree in the browser side panel.' },
-        { name: 'storage', kind: 'permission', why: 'Store the tree, notes, snapshots and settings locally.' },
-        { name: 'unlimitedStorage', kind: 'permission', why: 'Large trees and snapshot histories can exceed the default storage quota.' },
-        { name: 'sessions', kind: 'permission', why: 'Restore recently closed tabs and windows with their history intact.' },
+        { name: 'alarms', kind: 'permission', why: 'Run scheduled local backups (Pro) at the interval you choose, and re-validate a stored Pro licence key about once a week.' },
         { name: 'favicon', kind: 'permission', why: 'Show the favicon Chrome has already cached for each tab, without contacting any site.' },
-        { name: 'alarms', kind: 'permission', why: 'Run scheduled local backups (Pro) at the interval you choose.' },
-        { name: 'downloads', kind: 'permission', why: 'Write backup files to your downloads folder when you export or when a scheduled backup runs.' },
-        { name: 'identity', kind: 'optional permission', why: 'Obtain a Google OAuth token for Drive backup (Pro). Requested only when you enable Drive backup.' },
-        { name: 'https://www.googleapis.com/*', kind: 'host permission', why: 'Upload backups to Google Drive (Pro). Requested only when you enable Drive backup.' },
+        { name: 'https://api.lemonsqueezy.com/*', kind: 'host permission', why: 'Activate and re-validate a Pro licence key with the Lemon Squeezy licence API. This is the only host Arbor contacts.' },
       ],
       retention: [
-        'Tree data, notes and snapshots stay in local extension storage until you delete them in Arbor or uninstall the extension. Uninstalling removes all local extension data.',
-        'Backup files you export, or that scheduled backups write, are ordinary files on your disk or in your Google Drive and are under your control.',
+        'Tree data, notes and snapshots stay in IndexedDB and local extension storage until you delete them in Arbor or uninstall the extension. Uninstalling removes all local extension data.',
+        'Scheduled backups (Pro) are kept locally as a rolling set; when the set is full, the oldest copy is deleted as a new one is written. Backup files you save are ordinary files on your disk and are under your control.',
         'The licence entitlement flag is removed when you deactivate the licence or uninstall.',
       ],
     },
@@ -265,11 +262,12 @@ export const products: Record<ProductSlug, Product> = {
       ],
       permissions: [
         { name: 'declarativeNetRequest', kind: 'permission', why: 'Redirect and rewrite URLs at the network layer without reading the request or response body.' },
-        { name: 'declarativeNetRequestWithHostAccess', kind: 'permission', why: 'Allow redirect rules with regex substitution to apply on the sites you have granted access to.' },
         { name: 'webNavigation', kind: 'permission', why: 'Detect history-state navigations in single-page apps so rules can apply to them.' },
         { name: 'tabs', kind: 'permission', why: 'Update the URL of the current tab when a history-state redirect applies, and show the active rule count on the toolbar icon.' },
         { name: 'storage', kind: 'permission', why: 'Store rules, allowlist and settings locally, and in browser sync storage if Pro sync is enabled.' },
-        { name: '<all_urls>', kind: 'host permission', why: 'Rules can target any site, so redirects must be able to apply on any origin. Reroute does not inject scripts or read page content.' },
+        { name: 'contextMenus', kind: 'permission', why: 'Add a \u201cCopy clean link\u201d item to the right-click menu that copies a link with tracking parameters removed.' },
+        { name: 'alarms', kind: 'permission', why: 'Re-validate a stored Pro licence key about once a week.' },
+        { name: '<all_urls>', kind: 'host permission', why: 'Rules can target any site, so redirects must be able to apply on any origin. This also covers the only host Reroute contacts, api.lemonsqueezy.com, for Pro licence activation. Reroute does not inject scripts or read page content.' },
       ],
       retention: [
         'Rules and settings stay in local storage (and browser sync storage if you enabled Pro sync) until you delete them or uninstall the extension.',

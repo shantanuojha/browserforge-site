@@ -115,17 +115,17 @@ export const PRODUCT_LINKS: Record<
   { source: string; issues: string; changelog: string }
 > = {
   arbor: {
-    source: `${GITHUB_REPO_URL}/tree/main/apps/arbor`,
+    source: `${GITHUB_REPO_URL}/tree/main/extensions/arbor`,
     issues: `${GITHUB_REPO_URL}/issues?q=is%3Aissue+label%3Aarbor`,
     changelog: `${GITHUB_REPO_URL}/releases?q=arbor`,
   },
   reroute: {
-    source: `${GITHUB_REPO_URL}/tree/main/apps/reroute`,
+    source: `${GITHUB_REPO_URL}/tree/main/extensions/reroute`,
     issues: `${GITHUB_REPO_URL}/issues?q=is%3Aissue+label%3Areroute`,
     changelog: `${GITHUB_REPO_URL}/releases?q=reroute`,
   },
   cookiesweep: {
-    source: `${GITHUB_REPO_URL}/tree/main/apps/cookiesweep`,
+    source: `${GITHUB_REPO_URL}/tree/main/extensions/cookiesweep`,
     issues: `${GITHUB_REPO_URL}/issues?q=is%3Aissue+label%3Acookiesweep`,
     changelog: `${GITHUB_REPO_URL}/releases?q=cookiesweep`,
   },

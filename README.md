@@ -66,7 +66,6 @@ No other code changes are needed; `vercel.json` only names the product hosts.
 
 - `STORE_URLS` in `src/config.ts`: Arbor's Chrome Web Store link is set; Reroute and CookieSweep are `null`, which renders a disabled button labelled from the product `status` ("In review" / "Coming soon").
 - `PRO_SALES_LIVE` in `src/config.ts` is `false` while the Lemon Squeezy store is in test mode; the Pro button reads "Pro opens soon". Set it to `true` to expose `CHECKOUT_URLS` as "Buy Pro" links.
-- `PRODUCT_LINKS.*.source` paths assume `apps/<slug>` in the extensions monorepo.
 - `CONTACT_EMAIL` (`hello@shantanuojha.com`) needs a real mailbox.
 - Product `status` values in `src/data/products.ts` (`released`, `in-review`, `coming-soon`); update as each extension moves through store review.
 
