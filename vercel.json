@@ -5,9 +5,15 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/",
       "has": [{ "type": "host", "value": "www.shantanuojha.com" }],
-      "destination": "https://shantanuojha.com/:path*",
+      "destination": "https://shantanuojha.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path+",
+      "has": [{ "type": "host", "value": "www.shantanuojha.com" }],
+      "destination": "https://shantanuojha.com/:path+",
       "permanent": true
     },
     {
