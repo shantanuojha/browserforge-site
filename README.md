@@ -30,6 +30,8 @@ All product copy, feature lists, pricing and privacy details live in `src/data/p
 
 Requires Node >= 22.12 and pnpm 10.
 
+Commits must be authored and committed as `shantanu ojha <shantanu.ojha49@gmail.com>` (no `Co-authored-by` trailers for tools or agents).
+
 ```powershell
 pnpm install
 pnpm dev        # http://localhost:4321  (/ is rewritten to /home by a dev-only integration)
