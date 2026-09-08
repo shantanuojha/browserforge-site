@@ -30,7 +30,7 @@ Leave every domain pointing at the production branch (`main`). Do **not** set an
 
 If Vercel offers to add `www.shantanuojha.com` as a redirect to the apex, accept it; `vercel.json` also carries a `www` -> apex redirect, so either works.
 
-Each product has one canonical URL, its subdomain. `vercel.json` permanently redirects (308) `shantanuojha.com/arbor` and `/arbor/*` (and likewise for `reroute` and `cookiesweep`) to the subdomain; the redirects only match the apex host, so they never interfere with the host rewrites that serve the subdomains. `/privacy/*`, `/terms` and `/support` stay on the apex.
+Each product has one canonical URL, its subdomain. `vercel.json` permanently redirects (308) `shantanuojha.com/arbor` and `/arbor/*` (and likewise for `reroute` and `cookiesweep`) to the subdomain; the redirects only match the apex host, so they never interfere with the host rewrites that serve the subdomains. Each product's privacy policy is likewise canonical at `https://<slug>.shantanuojha.com/privacy`, and `shantanuojha.com/privacy/<slug>` redirects there. The privacy index (`/privacy`), `/terms` and `/support` stay on the apex.
 
 ## 3. DNS at the registrar
 
@@ -60,12 +60,14 @@ https://shantanuojha.com/arbor              308 -> https://arbor.shantanuojha.co
 https://arbor.shantanuojha.com/             Arbor product page
 https://reroute.shantanuojha.com/           Reroute product page
 https://cookiesweep.shantanuojha.com/       CookieSweep product page
-https://shantanuojha.com/privacy/arbor      privacy policy
+https://shantanuojha.com/privacy            index of privacy policies
+https://arbor.shantanuojha.com/privacy      Arbor privacy policy
+https://shantanuojha.com/privacy/arbor      308 -> https://arbor.shantanuojha.com/privacy
 https://arbor.shantanuojha.com/anything     404 page
 https://shantanuojha.com/sitemap-index.xml
 ```
 
-Links on the product subdomains point to `https://shantanuojha.com/...` for privacy, terms and support, by design.
+Links on the product subdomains point to `https://shantanuojha.com/...` for the privacy index, terms and support, by design.
 
 ## 5. Optional: deploy from the command line
 

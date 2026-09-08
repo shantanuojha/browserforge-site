@@ -2,6 +2,7 @@
 import Legal from '../layouts/Legal.astro';
 import ProductIcon from '../components/ProductIcon.astro';
 import { BRAND, CONTACT_EMAIL, GITHUB_REPO_URL, NEW_ISSUE_URL, PRODUCT_LINKS } from '../config';
+import { privacyUrl } from '../lib/links';
 import { productList } from '../data/products';
 ---
 
@@ -43,7 +44,7 @@ import { productList } from '../data/products';
             <a href={PRODUCT_LINKS[p.slug].changelog} rel="noopener">
               Release notes
             </a>
-            <a href={`/privacy/${p.slug}`}>Privacy policy</a>
+            <a href={privacyUrl(p.slug)}>Privacy policy</a>
           </div>
         </li>
       ))

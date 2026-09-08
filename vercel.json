@@ -51,6 +51,24 @@
       "has": [{ "type": "host", "value": "shantanuojha.com" }],
       "destination": "https://cookiesweep.shantanuojha.com/:path*",
       "permanent": true
+    },
+    {
+      "source": "/privacy/arbor",
+      "has": [{ "type": "host", "value": "shantanuojha.com" }],
+      "destination": "https://arbor.shantanuojha.com/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/privacy/reroute",
+      "has": [{ "type": "host", "value": "shantanuojha.com" }],
+      "destination": "https://reroute.shantanuojha.com/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/privacy/cookiesweep",
+      "has": [{ "type": "host", "value": "shantanuojha.com" }],
+      "destination": "https://cookiesweep.shantanuojha.com/privacy",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -58,6 +76,11 @@
       "source": "/",
       "has": [{ "type": "host", "value": "arbor.shantanuojha.com" }],
       "destination": "/arbor"
+    },
+    {
+      "source": "/privacy",
+      "has": [{ "type": "host", "value": "arbor.shantanuojha.com" }],
+      "destination": "/privacy/arbor"
     },
     {
       "source": "/(.*)",
@@ -70,6 +93,11 @@
       "destination": "/reroute"
     },
     {
+      "source": "/privacy",
+      "has": [{ "type": "host", "value": "reroute.shantanuojha.com" }],
+      "destination": "/privacy/reroute"
+    },
+    {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "reroute.shantanuojha.com" }],
       "destination": "/reroute/$1"
@@ -80,6 +108,11 @@
       "destination": "/cookiesweep"
     },
     {
+      "source": "/privacy",
+      "has": [{ "type": "host", "value": "cookiesweep.shantanuojha.com" }],
+      "destination": "/privacy/cookiesweep"
+    },
+    {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "cookiesweep.shantanuojha.com" }],
       "destination": "/cookiesweep/$1"
@@ -87,6 +120,10 @@
     {
       "source": "/",
       "destination": "/home"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy-index"
     }
   ],
   "headers": [

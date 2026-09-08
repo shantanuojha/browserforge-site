@@ -6,7 +6,7 @@ import HeroDrawing from '../components/HeroDrawing.astro';
 import ProductIcon from '../components/ProductIcon.astro';
 import StatusBadge from '../components/StatusBadge.astro';
 import { BRAND, GITHUB_REPO_URL, TAGLINE } from '../config';
-import { abs, productHome } from '../lib/links';
+import { abs, privacyUrl, productHome } from '../lib/links';
 import { productList } from '../data/products';
 
 const canonical = abs('/');
@@ -96,7 +96,7 @@ const canonical = abs('/');
                 <a class="btn" href={productHome(p.slug)}>
                   {p.name} details and pricing
                 </a>
-                <a class="link" href={`/privacy/${p.slug}`}>
+                <a class="link" href={privacyUrl(p.slug)}>
                   Privacy policy
                 </a>
                 <span class="pricing mono">

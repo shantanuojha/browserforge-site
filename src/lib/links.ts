@@ -1,18 +1,21 @@
-import { LANDING_HOST, PRODUCT_HOSTS, SITE_URL, type ProductSlug } from '../config';
+import { LANDING_HOST, PRIVACY_URLS, PRODUCT_HOSTS, SITE_URL, type ProductSlug } from '../config';
 
 /**
  * Link helpers.
  *
  * The site is static and one deployment answers for several hostnames:
  *
- *   https://shantanuojha.com/            landing, /privacy, /terms, /support
- *   https://arbor.shantanuojha.com/      product page, canonical; a Vercel
- *                                        rewrite serves the built `/arbor` file
+ *   https://shantanuojha.com/              landing, /privacy (index), /terms, /support
+ *   https://arbor.shantanuojha.com/        product page, canonical; a Vercel
+ *                                          rewrite serves the built `/arbor` file
+ *   https://arbor.shantanuojha.com/privacy Arbor privacy policy, canonical; a
+ *                                          rewrite serves the built `/privacy/arbor`
  *
- * `https://shantanuojha.com/arbor` is permanently redirected to the subdomain
- * by `vercel.json`, so it must never be linked to. Product pages are served
- * from their own host, so any link that leaves the page must be an absolute
- * URL on the landing host. Only in-page anchors (`#pricing`) may be relative.
+ * `https://shantanuojha.com/arbor` and `/privacy/arbor` are permanently
+ * redirected to the subdomain by `vercel.json`, so they must never be linked
+ * to. Product and privacy-policy pages are served from their own host, so any
+ * link that leaves the page must be an absolute URL. Only in-page anchors
+ * (`#pricing`) may be relative.
  */
 
 /** Absolute URL on the landing host, e.g. `abs('/privacy/arbor')`. */
@@ -30,9 +33,13 @@ export function productHome(slug: ProductSlug): string {
   return `https://${PRODUCT_HOSTS[slug]}/`;
 }
 
-/** Absolute URL of a product's privacy policy on the landing host. */
+/**
+ * Canonical URL of a product's privacy policy on the product host, e.g.
+ * `https://arbor.shantanuojha.com/privacy`; without a slug, the index of all
+ * policies on the landing host.
+ */
 export function privacyUrl(slug?: ProductSlug): string {
-  return abs(slug ? `/privacy/${slug}` : '/privacy');
+  return slug ? PRIVACY_URLS[slug] : abs('/privacy');
 }
 
 export const termsUrl = () => abs('/terms');
@@ -48,9 +55,10 @@ export type LinkMode = 'relative' | 'absolute';
  * Returns an href builder for shared components (header, footer).
  *
  * - `relative`: used on pages that only ever live on the landing host
- *   (landing, privacy, terms, support). Keeps preview deployments working.
- * - `absolute`: used on product pages, which may be served from a product
- *   subdomain where a relative `/privacy` would resolve to the wrong host.
+ *   (landing, privacy index, terms, support). Keeps preview deployments working.
+ * - `absolute`: used on product and privacy-policy pages, which are served
+ *   from a product subdomain where a relative `/terms` would resolve to the
+ *   wrong host.
  */
 export function linker(mode: LinkMode): (path: string) => string {
   return mode === 'absolute' ? abs : (path: string) => (path === '/' ? '/' : path.replace(/\/+$/, ''));

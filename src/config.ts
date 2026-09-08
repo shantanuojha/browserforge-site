@@ -60,6 +60,19 @@ export const PRODUCT_HOSTS: Record<ProductSlug, string> = {
 };
 
 /**
+ * Canonical privacy-policy URL for each product, served at `/privacy` on the
+ * product's own host. The page is built as `/privacy/${slug}` on the landing
+ * host so the host rewrite in `vercel.json` has a file to serve;
+ * `https://${LANDING_HOST}/privacy/${slug}` itself is permanently redirected
+ * here. The index of all policies stays at `https://${LANDING_HOST}/privacy`.
+ */
+export const PRIVACY_URLS: Record<ProductSlug, string> = {
+  arbor: `https://${PRODUCT_HOSTS.arbor}/privacy`,
+  reroute: `https://${PRODUCT_HOSTS.reroute}/privacy`,
+  cookiesweep: `https://${PRODUCT_HOSTS.cookiesweep}/privacy`,
+};
+
+/**
  * Store listing URLs. PLACEHOLDERS: replace with the real Chrome Web Store
  * and Edge Add-ons listing URLs once the extensions are published. While the
  * value is `null` the "Add to Chrome" button renders as a disabled

@@ -11,13 +11,20 @@ import {
   PRIVACY_EMAIL,
   PRODUCT_LINKS,
 } from '../config';
+import { privacyUrl } from '../lib/links';
 import type { Product } from '../data/products';
 
+/**
+ * Served from the product host (`arbor.shantanuojha.com/privacy`) by a Vercel
+ * rewrite; the landing-host path `/privacy/arbor` only exists as the rewrite
+ * target and redirects there. Every outbound link is therefore absolute.
+ */
 interface Props {
   product: Product;
 }
 const { product: p } = Astro.props;
 const path = `/privacy/${p.slug}`;
+const canonical = privacyUrl(p.slug);
 const links = PRODUCT_LINKS[p.slug];
 
 interface NetRow {
@@ -73,6 +80,8 @@ const sections = [
   title={`${p.name} privacy policy`}
   description={`How the ${p.name} browser extension handles data. Short version: everything stays in your browser, and the only network calls are the ones listed here.`}
   path={path}
+  canonical={canonical}
+  mode="absolute"
   kicker={`${BRAND} / Privacy`}
   effective={PRIVACY_EFFECTIVE_DATE}
   current="privacy"
@@ -82,10 +91,10 @@ const sections = [
     <div class="other">
       <span class="mono">Other policies</span>
       <ul>
-        <li><a href="/privacy">All policies</a></li>
-        {p.slug !== 'arbor' && <li><a href="/privacy/arbor">Arbor</a></li>}
-        {p.slug !== 'reroute' && <li><a href="/privacy/reroute">Reroute</a></li>}
-        {p.slug !== 'cookiesweep' && <li><a href="/privacy/cookiesweep">CookieSweep</a></li>}
+        <li><a href={privacyUrl()}>All policies</a></li>
+        {p.slug !== 'arbor' && <li><a href={privacyUrl('arbor')}>Arbor</a></li>}
+        {p.slug !== 'reroute' && <li><a href={privacyUrl('reroute')}>Reroute</a></li>}
+        {p.slug !== 'cookiesweep' && <li><a href={privacyUrl('cookiesweep')}>CookieSweep</a></li>}
       </ul>
     </div>
   </Fragment>

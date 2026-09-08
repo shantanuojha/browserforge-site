@@ -1,8 +1,18 @@
 ---
-import Legal from '../../layouts/Legal.astro';
-import ProductIcon from '../../components/ProductIcon.astro';
-import { BRAND, PRIVACY_EFFECTIVE_DATE, PRIVACY_EMAIL } from '../../config';
-import { productList } from '../../data/products';
+import Legal from '../layouts/Legal.astro';
+import ProductIcon from '../components/ProductIcon.astro';
+import { BRAND, PRIVACY_EFFECTIVE_DATE, PRIVACY_EMAIL } from '../config';
+import { privacyUrl } from '../lib/links';
+import { productList } from '../data/products';
+
+/**
+ * The index of privacy policies, canonical at `/privacy` on the landing host.
+ * It is built as `/privacy-index` on purpose: Vercel serves files that exist
+ * on disk before evaluating rewrites, so a `privacy/index.html` would win over
+ * the host rewrite that turns `arbor.shantanuojha.com/privacy` into
+ * `/privacy/arbor`. `vercel.json` rewrites `/privacy` -> `/privacy-index` for
+ * the landing host (same trick as `/` -> `/home`).
+ */
 ---
 
 <Legal
@@ -31,7 +41,7 @@ import { productList } from '../../data/products';
     {
       productList.map((p) => (
         <li style={`--c: var(--${p.slug})`}>
-          <a href={`/privacy/${p.slug}`} class="card">
+          <a href={privacyUrl(p.slug)} class="card">
             <ProductIcon slug={p.slug} size={36} class="icon" />
             <span class="name">{p.name} privacy policy</span>
             <span class="desc">
