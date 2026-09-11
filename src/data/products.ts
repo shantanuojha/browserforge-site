@@ -188,9 +188,8 @@ export const products: Record<ProductSlug, Product> = {
     tagline: 'Rewrite URLs on the way in. Wildcards, regular expressions, and a rule tester that tells the truth.',
     summary:
       'Reroute redirects and rewrites URLs before they load. Write rules with wildcards or regular expressions, use capture groups and transforms, and check each rule against sample URLs before you turn it on. A built-in cleaner strips tracking parameters using the ClearURLs rule catalog shipped inside the extension.',
-    status: 'in-review',
-    statusNote:
-      'Submitted to the Chrome Web Store and awaiting review. Source is public; builds are for testing only.',
+    status: 'released',
+    statusNote: 'Published on the Chrome Web Store. Also works in Edge: install from the same listing.',
     browsers: ['Chrome', 'Edge'],
     features: [
       {

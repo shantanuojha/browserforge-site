@@ -83,7 +83,10 @@ export const STORE_URLS: Record<ProductSlug, { chrome: string | null; edge: stri
     chrome: 'https://chromewebstore.google.com/detail/bchjeadfoipoeiiofffdeifecphcmhge',
     edge: null,
   },
-  reroute: { chrome: null, edge: null },
+  reroute: {
+    chrome: 'https://chromewebstore.google.com/detail/aohmbahmabficbpaleikljpkmdopmccj',
+    edge: null,
+  },
   cookiesweep: { chrome: null, edge: null },
 };
 
