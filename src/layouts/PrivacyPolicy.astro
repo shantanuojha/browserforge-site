@@ -5,6 +5,7 @@ import {
   BRAND,
   LICENCE_API_HOST,
   LICENCE_PROVIDER,
+  LICENCE_PROVIDER_LEGAL_NAME,
   LICENCE_PROVIDER_PRIVACY_URL,
   OWNER,
   PRIVACY_EFFECTIVE_DATE,
@@ -193,7 +194,7 @@ const sections = [
   {
     p.pro && (
       <p>
-        {LICENCE_PROVIDER} is our merchant of record for Pro licences. When you buy a licence, your payment details
+        {LICENCE_PROVIDER_LEGAL_NAME} ({LICENCE_PROVIDER}) is our merchant of record for Pro licences. When you buy a licence, your payment details
         and email address are handled by {LICENCE_PROVIDER} under
         <a href={LICENCE_PROVIDER_PRIVACY_URL} rel="noopener">
           its privacy policy

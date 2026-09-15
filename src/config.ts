@@ -41,17 +41,18 @@ export const SITE_REPO_URL = 'https://github.com/shantanuojha/browserforge-site'
  * when it changes.
  */
 export type LicenseProviderId = 'lemonsqueezy' | 'polar';
-export const LICENSE_PROVIDER: LicenseProviderId = 'lemonsqueezy';
+export const LICENSE_PROVIDER: LicenseProviderId = 'polar';
 
 /**
- * Polar constants. Placeholders until the owner creates the Polar organisation
- * and products: checkout links are `https://buy.polar.sh/polar_cl_...`, the
- * customer portal is `https://polar.sh/<org-slug>/portal`. Empty strings mean
- * "not configured" and render as no link.
+ * Polar constants: public checkout links (`https://buy.polar.sh/polar_cl_...`)
+ * for each Pro product and the customer portal (`https://polar.sh/<org-slug>/portal`).
+ * Empty strings mean "not configured" and render as no link.
  */
-export const POLAR_ARBOR_CHECKOUT_URL = '';
-export const POLAR_REROUTE_CHECKOUT_URL = '';
-export const POLAR_CUSTOMER_PORTAL_URL = '';
+export const POLAR_ARBOR_CHECKOUT_URL =
+  'https://buy.polar.sh/polar_cl_jDjOkiSThpvFuLlt4GkjgAKsOtzErmBsdtQh801uZuF';
+export const POLAR_REROUTE_CHECKOUT_URL =
+  'https://buy.polar.sh/polar_cl_U2cHE7aJDjLVbnbxWvM8hgPoxkCKe6fNrimEz0F5f0c';
+export const POLAR_CUSTOMER_PORTAL_URL = 'https://polar.sh/browserforge/portal';
 
 /**
  * Lemon Squeezy checkout links (`buy_now_url` of each Pro product on the
@@ -66,6 +67,8 @@ export const LEMONSQUEEZY_CUSTOMER_PORTAL_URL = 'https://app.lemonsqueezy.com/my
 interface LicenseProviderInfo {
   /** Display name, used in prose ("handled by Polar", "Polar is our merchant of record"). */
   name: string;
+  /** Registered company name, used where the legal documents name the merchant of record. */
+  legalName: string;
   url: string;
   privacyUrl: string;
   /** The one host the extensions contact for licence activation and re-validation. */
@@ -78,6 +81,7 @@ interface LicenseProviderInfo {
 const LICENSE_PROVIDERS: Record<LicenseProviderId, LicenseProviderInfo> = {
   lemonsqueezy: {
     name: 'Lemon Squeezy',
+    legalName: 'Lemon Squeezy, LLC',
     url: 'https://www.lemonsqueezy.com',
     privacyUrl: 'https://www.lemonsqueezy.com/privacy',
     apiHost: 'api.lemonsqueezy.com',
@@ -86,6 +90,7 @@ const LICENSE_PROVIDERS: Record<LicenseProviderId, LicenseProviderInfo> = {
   },
   polar: {
     name: 'Polar',
+    legalName: 'Polar Software, Inc.',
     url: 'https://polar.sh',
     privacyUrl: 'https://polar.sh/legal/privacy',
     apiHost: 'api.polar.sh',
@@ -97,6 +102,7 @@ const LICENSE_PROVIDERS: Record<LicenseProviderId, LicenseProviderInfo> = {
 const provider = LICENSE_PROVIDERS[LICENSE_PROVIDER];
 
 export const LICENCE_PROVIDER = provider.name;
+export const LICENCE_PROVIDER_LEGAL_NAME = provider.legalName;
 export const LICENCE_PROVIDER_URL = provider.url;
 export const LICENCE_PROVIDER_PRIVACY_URL = provider.privacyUrl;
 export const LICENCE_API_HOST = provider.apiHost;
@@ -104,8 +110,8 @@ export const CUSTOMER_PORTAL_URL = provider.customerPortalUrl;
 export const REFUND_WINDOW_DAYS = 14;
 
 /** Legal document dates. */
-export const PRIVACY_EFFECTIVE_DATE = '2026-09-08';
-export const TERMS_EFFECTIVE_DATE = '2026-09-08';
+export const PRIVACY_EFFECTIVE_DATE = '2026-09-16';
+export const TERMS_EFFECTIVE_DATE = '2026-09-16';
 
 export type ProductSlug = 'arbor' | 'reroute' | 'cookiesweep';
 
@@ -165,13 +171,13 @@ export const CHECKOUT_URLS: Partial<Record<ProductSlug, string | null>> = {
 };
 
 /**
- * Whether Pro purchases are open. Flip to `true` once the provider's store can
- * take real payments (Polar: payout account connected, checkout links created,
- * sandbox test plan passed, extensions released with the same provider); until
- * then the Pro button is rendered disabled ("Pro opens soon") and the checkout
- * links above are not exposed.
+ * Whether Pro purchases are open. `true` once the provider's store can take
+ * real payments (Polar: payout account connected, checkout links created,
+ * sandbox test plan passed, extensions released with the same provider); while
+ * `false` the Pro button is rendered disabled ("Pro opens soon") and the
+ * checkout links above are not exposed.
  */
-export const PRO_SALES_LIVE = false;
+export const PRO_SALES_LIVE = true;
 
 /** Per-product source, issues and changelog links. */
 export const PRODUCT_LINKS: Record<
