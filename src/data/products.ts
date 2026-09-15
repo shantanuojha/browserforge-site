@@ -1,4 +1,4 @@
-import type { ProductSlug } from '../config';
+import { LICENCE_API_HOST, LICENCE_PROVIDER, LICENSE_PROVIDER, type ProductSlug } from '../config';
 
 /**
  * Where the extension is in the Chrome Web Store pipeline.
@@ -77,8 +77,22 @@ export const STORE_PENDING_LABEL: Record<Status, string> = {
   released: 'Not yet listed',
 };
 
-const LICENCE_NETWORK =
-  'Optional Pro licence activation. When you enter a licence key, the extension sends the key and a random instance identifier to the Lemon Squeezy licence API (api.lemonsqueezy.com) to activate it, and about once a week afterwards to re-validate it. Nothing else is sent. The response (valid or not, and the licence expiry if any) is stored locally as an entitlement flag.';
+const LICENCE_NETWORK = `Optional Pro licence activation. When you enter a licence key, the extension sends the key and a random instance identifier to the ${LICENCE_PROVIDER} licence API (${LICENCE_API_HOST}) to activate it, and about once a week afterwards to re-validate it. Nothing else is sent. The response (valid or not, and the licence expiry if any) is stored locally as an entitlement flag.`;
+
+/**
+ * Arbor declares `https://api.lemonsqueezy.com/*` as a host permission. While Lemon Squeezy is
+ * the provider that is the licence host; once Polar is live the declaration is a leftover (Polar's
+ * API allows extension requests without a host permission) that the next release removes. The
+ * row must describe whichever is true for the shipped build.
+ */
+const ARBOR_LICENCE_HOST_PERMISSION: Permission = {
+  name: 'https://api.lemonsqueezy.com/*',
+  kind: 'host permission',
+  why:
+    LICENSE_PROVIDER === 'polar'
+      ? `Retained from the previous licence provider (Lemon Squeezy) and removed in the next release; the current version no longer contacts that host. Pro licence checks go to the ${LICENCE_PROVIDER} licence API (${LICENCE_API_HOST}), which needs no host permission. Arbor contacts no other host.`
+      : `Activate and re-validate a Pro licence key with the ${LICENCE_PROVIDER} licence API. This is the only host Arbor contacts.`,
+};
 
 export const products: Record<ProductSlug, Product> = {
   arbor: {
@@ -170,7 +184,7 @@ export const products: Record<ProductSlug, Product> = {
         { name: 'sidePanel', kind: 'permission', why: 'Display the tree in the browser side panel.' },
         { name: 'alarms', kind: 'permission', why: 'Run scheduled local backups (Pro) at the interval you choose, and re-validate a stored Pro licence key about once a week.' },
         { name: 'favicon', kind: 'permission', why: 'Show the favicon Chrome has already cached for each tab, without contacting any site.' },
-        { name: 'https://api.lemonsqueezy.com/*', kind: 'host permission', why: 'Activate and re-validate a Pro licence key with the Lemon Squeezy licence API. This is the only host Arbor contacts.' },
+        ARBOR_LICENCE_HOST_PERMISSION,
       ],
       retention: [
         'Tree data, notes and snapshots stay in IndexedDB and local extension storage until you delete them in Arbor or uninstall the extension. Uninstalling removes all local extension data.',
@@ -266,7 +280,7 @@ export const products: Record<ProductSlug, Product> = {
         { name: 'storage', kind: 'permission', why: 'Store rules, allowlist and settings locally, and in browser sync storage if Pro sync is enabled.' },
         { name: 'contextMenus', kind: 'permission', why: 'Add a \u201cCopy clean link\u201d item to the right-click menu that copies a link with tracking parameters removed.' },
         { name: 'alarms', kind: 'permission', why: 'Re-validate a stored Pro licence key about once a week.' },
-        { name: '<all_urls>', kind: 'host permission', why: 'Rules can target any site, so redirects must be able to apply on any origin. This also covers the only host Reroute contacts, api.lemonsqueezy.com, for Pro licence activation. Reroute does not inject scripts or read page content.' },
+        { name: '<all_urls>', kind: 'host permission', why: `Rules can target any site, so redirects must be able to apply on any origin. This also covers the only host Reroute contacts, ${LICENCE_API_HOST}, for Pro licence activation. Reroute does not inject scripts or read page content.` },
       ],
       retention: [
         'Rules and settings stay in local storage (and browser sync storage if you enabled Pro sync) until you delete them or uninstall the extension.',

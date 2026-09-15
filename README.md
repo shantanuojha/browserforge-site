@@ -65,7 +65,8 @@ No other code changes are needed; `vercel.json` only names the product hosts.
 ## Placeholders to fill in
 
 - `STORE_URLS` in `src/config.ts`: Arbor's Chrome Web Store link is set; Reroute and CookieSweep are `null`, which renders a disabled button labelled from the product `status` ("In review" / "Coming soon").
-- `PRO_SALES_LIVE` in `src/config.ts` is `false` while the Lemon Squeezy store is in test mode; the Pro button reads "Pro opens soon". Set it to `true` to expose `CHECKOUT_URLS` as "Buy Pro" links.
+- `LICENSE_PROVIDER` in `src/config.ts` selects the licence provider (`lemonsqueezy` today, `polar` next) and drives the Pro button's checkout link, the "merchant of record" wording in the terms and the API host named in the privacy policies. It must match the `WXT_LICENSE_PROVIDER` the extensions are built with; flip both on the same day and bump the legal effective dates. The Polar constants (`POLAR_*_CHECKOUT_URL`, `POLAR_CUSTOMER_PORTAL_URL`) are empty placeholders until the Polar organisation exists.
+- `PRO_SALES_LIVE` in `src/config.ts` is `false` until the provider can take real payments; the Pro button reads "Pro opens soon". Set it to `true` to expose `CHECKOUT_URLS` as "Buy Pro" links.
 - `CONTACT_EMAIL` (`hello@shantanuojha.com`) needs a real mailbox.
 - Product `status` values in `src/data/products.ts` (`released`, `in-review`, `coming-soon`); update as each extension moves through store review.
 

@@ -4,7 +4,14 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ProductIcon from '../components/ProductIcon.astro';
 import StatusBadge from '../components/StatusBadge.astro';
-import { CHECKOUT_URLS, PRO_SALES_LIVE, PRODUCT_LINKS, REFUND_WINDOW_DAYS, STORE_URLS } from '../config';
+import {
+  CHECKOUT_URLS,
+  LICENCE_PROVIDER,
+  PRO_SALES_LIVE,
+  PRODUCT_LINKS,
+  REFUND_WINDOW_DAYS,
+  STORE_URLS,
+} from '../config';
 import { abs, privacyUrl, productHome, termsUrl } from '../lib/links';
 import { STORE_PENDING_LABEL, type Product } from '../data/products';
 
@@ -211,7 +218,7 @@ const description = `${p.name}: ${p.category.toLowerCase()} for Chrome and Edge.
           <p class="fine">
             {
               p.pro
-                ? `Pro is a one-time purchase handled by Lemon Squeezy, with a ${REFUND_WINDOW_DAYS}-day refund window. One licence key works across all your browser profiles. The source code stays MIT-licensed. `
+                ? `Pro is a one-time purchase handled by ${LICENCE_PROVIDER}, with a ${REFUND_WINDOW_DAYS}-day refund window. One licence key works across all your browser profiles. The source code stays MIT-licensed. `
                 : `${p.name} has no paid tier and no licence check. It is funded by the Pro tiers of the other BrowserForge extensions. `
             }
             <a href={termsUrl()}>Terms and licence</a>.

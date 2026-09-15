@@ -32,11 +32,75 @@ export const GITHUB_ORG_URL = 'https://github.com/shantanuojha';
 export const GITHUB_REPO_URL = 'https://github.com/shantanuojha/browserforge';
 export const SITE_REPO_URL = 'https://github.com/shantanuojha/browserforge-site';
 
-/** Payments / licensing provider. */
-export const LICENCE_PROVIDER = 'Lemon Squeezy';
-export const LICENCE_PROVIDER_URL = 'https://www.lemonsqueezy.com';
-export const LICENCE_PROVIDER_PRIVACY_URL = 'https://www.lemonsqueezy.com/privacy';
-export const LICENCE_API_HOST = 'api.lemonsqueezy.com';
+/**
+ * Payments / licensing provider. `LICENSE_PROVIDER` must match the
+ * `WXT_LICENSE_PROVIDER` the extensions are built with, and both must flip on
+ * the same day: the privacy policies name the API host the extensions call,
+ * the terms name the merchant of record, and the Pro button links to the
+ * provider's checkout. Bump `PRIVACY_EFFECTIVE_DATE` and `TERMS_EFFECTIVE_DATE`
+ * when it changes.
+ */
+export type LicenseProviderId = 'lemonsqueezy' | 'polar';
+export const LICENSE_PROVIDER: LicenseProviderId = 'lemonsqueezy';
+
+/**
+ * Polar constants. Placeholders until the owner creates the Polar organisation
+ * and products: checkout links are `https://buy.polar.sh/polar_cl_...`, the
+ * customer portal is `https://polar.sh/<org-slug>/portal`. Empty strings mean
+ * "not configured" and render as no link.
+ */
+export const POLAR_ARBOR_CHECKOUT_URL = '';
+export const POLAR_REROUTE_CHECKOUT_URL = '';
+export const POLAR_CUSTOMER_PORTAL_URL = '';
+
+/**
+ * Lemon Squeezy checkout links (`buy_now_url` of each Pro product on the
+ * `browserforge.lemonsqueezy.com` storefront). Retired once Polar is live.
+ */
+export const LEMONSQUEEZY_ARBOR_CHECKOUT_URL =
+  'https://browserforge.lemonsqueezy.com/checkout/buy/57c6e6d6-8be1-42d9-943e-e05f7d556191';
+export const LEMONSQUEEZY_REROUTE_CHECKOUT_URL =
+  'https://browserforge.lemonsqueezy.com/checkout/buy/155e7615-3e23-4f18-8a82-9ec1208548d9';
+export const LEMONSQUEEZY_CUSTOMER_PORTAL_URL = 'https://app.lemonsqueezy.com/my-orders';
+
+interface LicenseProviderInfo {
+  /** Display name, used in prose ("handled by Polar", "Polar is our merchant of record"). */
+  name: string;
+  url: string;
+  privacyUrl: string;
+  /** The one host the extensions contact for licence activation and re-validation. */
+  apiHost: string;
+  /** Where buyers find their keys again; linked from the extensions' "Restore purchase". */
+  customerPortalUrl: string;
+  checkout: { arbor: string; reroute: string };
+}
+
+const LICENSE_PROVIDERS: Record<LicenseProviderId, LicenseProviderInfo> = {
+  lemonsqueezy: {
+    name: 'Lemon Squeezy',
+    url: 'https://www.lemonsqueezy.com',
+    privacyUrl: 'https://www.lemonsqueezy.com/privacy',
+    apiHost: 'api.lemonsqueezy.com',
+    customerPortalUrl: LEMONSQUEEZY_CUSTOMER_PORTAL_URL,
+    checkout: { arbor: LEMONSQUEEZY_ARBOR_CHECKOUT_URL, reroute: LEMONSQUEEZY_REROUTE_CHECKOUT_URL },
+  },
+  polar: {
+    name: 'Polar',
+    url: 'https://polar.sh',
+    privacyUrl: 'https://polar.sh/legal/privacy',
+    apiHost: 'api.polar.sh',
+    customerPortalUrl: POLAR_CUSTOMER_PORTAL_URL,
+    checkout: { arbor: POLAR_ARBOR_CHECKOUT_URL, reroute: POLAR_REROUTE_CHECKOUT_URL },
+  },
+};
+
+const provider = LICENSE_PROVIDERS[LICENSE_PROVIDER];
+
+export const LICENCE_PROVIDER = provider.name;
+export const LICENCE_PROVIDER_URL = provider.url;
+export const LICENCE_PROVIDER_PRIVACY_URL = provider.privacyUrl;
+export const LICENCE_API_HOST = provider.apiHost;
+export const CUSTOMER_PORTAL_URL = provider.customerPortalUrl;
 export const REFUND_WINDOW_DAYS = 14;
 
 /** Legal document dates. */
@@ -90,14 +154,10 @@ export const STORE_URLS: Record<ProductSlug, { chrome: string | null; edge: stri
   cookiesweep: { chrome: null, edge: null },
 };
 
-/**
- * Lemon Squeezy checkout links (`buy_now_url` of each Pro product on the
- * `browserforge.lemonsqueezy.com` storefront).
- */
-export const ARBOR_CHECKOUT_URL =
-  'https://browserforge.lemonsqueezy.com/checkout/buy/57c6e6d6-8be1-42d9-943e-e05f7d556191';
-export const REROUTE_CHECKOUT_URL =
-  'https://browserforge.lemonsqueezy.com/checkout/buy/155e7615-3e23-4f18-8a82-9ec1208548d9';
+/** The current provider's hosted checkout per Pro product; an empty placeholder reads as `null`. */
+const checkoutOrNull = (url: string): string | null => (url ? url : null);
+export const ARBOR_CHECKOUT_URL = checkoutOrNull(provider.checkout.arbor);
+export const REROUTE_CHECKOUT_URL = checkoutOrNull(provider.checkout.reroute);
 
 export const CHECKOUT_URLS: Partial<Record<ProductSlug, string | null>> = {
   arbor: ARBOR_CHECKOUT_URL,
@@ -105,9 +165,10 @@ export const CHECKOUT_URLS: Partial<Record<ProductSlug, string | null>> = {
 };
 
 /**
- * Whether Pro purchases are open. Flip to `true` once the Lemon Squeezy store
- * is out of test mode and approved; until then real cards would be declined,
- * so the Pro button is rendered disabled ("Pro opens soon") and the checkout
+ * Whether Pro purchases are open. Flip to `true` once the provider's store can
+ * take real payments (Polar: payout account connected, checkout links created,
+ * sandbox test plan passed, extensions released with the same provider); until
+ * then the Pro button is rendered disabled ("Pro opens soon") and the checkout
  * links above are not exposed.
  */
 export const PRO_SALES_LIVE = false;
