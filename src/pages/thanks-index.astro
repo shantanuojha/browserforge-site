@@ -1,0 +1,114 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ProductIcon from '../components/ProductIcon.astro';
+import { BRAND, CONTACT_EMAIL } from '../config';
+import { abs, productHome, supportUrl } from '../lib/links';
+import { productList } from '../data/products';
+
+/**
+ * Generic landing for `https://shantanuojha.com/thanks`. Polar's success URLs
+ * point at the product hosts (`arbor.shantanuojha.com/thanks`), so this page
+ * only catches people who land on the apex by hand and points them to the
+ * right product page.
+ *
+ * Built as `thanks-index.html`, not `thanks.html`: Vercel serves files that
+ * exist on disk before it evaluates rewrites, so a `thanks.html` would win over
+ * the product-host rewrite `/thanks` -> `/arbor/thanks`. `vercel.json` rewrites
+ * `/thanks` -> `/thanks-index` for the landing host (same pattern as `/privacy`).
+ */
+const paid = productList.filter((p) => p.pro);
+---
+
+<Base
+  title="Thanks for your purchase"
+  description="Find and activate the licence key for the BrowserForge extension you bought."
+  canonical={abs('/thanks')}
+  noindex
+>
+  <Header />
+  <main id="main" class="container thanks">
+    <p class="label reveal" style="--i: 0">{BRAND} / Thanks</p>
+    <h1 class="reveal" style="--i: 1">Thanks for your purchase.</h1>
+    <p class="lede reveal" style="--i: 2">
+      Each Pro product has its own page with the steps to find and activate your licence key. Pick the one you
+      bought.
+    </p>
+    <ul class="products reveal" style="--i: 3" role="list">
+      {
+        paid.map((p) => (
+          <li style={`--c: var(--${p.slug})`}>
+            <a href={`${productHome(p.slug)}thanks`}>
+              <ProductIcon slug={p.slug} size={32} class="icon" />
+              <span class="name">{p.name} Pro</span>
+              <span class="mono">Activate your key</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="fine reveal" style="--i: 4">
+      Questions about an order go to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>; see the
+      <a href={supportUrl()}>support page</a> for everything else.
+    </p>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .thanks {
+    padding-block: clamp(2.5rem, 6vw, 5rem) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  h1 {
+    font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+    max-width: 20ch;
+  }
+  .lede {
+    color: var(--ink-2);
+    font-size: 1.125rem;
+    max-width: 60ch;
+  }
+  .products {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    max-width: 44rem;
+  }
+  @media (min-width: 640px) {
+    .products {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .products a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.5rem;
+    border: 1px solid var(--rule-strong);
+    text-decoration: none;
+    transition: box-shadow 180ms var(--ease-out), border-color 180ms ease;
+  }
+  .products a:hover {
+    border-color: var(--c);
+    box-shadow: 4px 4px 0 var(--c);
+  }
+  .icon {
+    color: var(--c);
+  }
+  .name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.1;
+  }
+  .fine {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--ink-3);
+  }
+</style>

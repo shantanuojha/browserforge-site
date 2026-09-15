@@ -124,6 +124,10 @@
     {
       "source": "/privacy",
       "destination": "/privacy-index"
+    },
+    {
+      "source": "/thanks",
+      "destination": "/thanks-index"
     }
   ],
   "headers": [

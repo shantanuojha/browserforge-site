@@ -19,6 +19,7 @@ import { PRIVACY_URLS, PRODUCT_HOSTS, PRODUCT_SLUGS, SITE_URL } from './src/conf
 const LANDING_REWRITES: Record<string, string> = {
   '/': '/home',
   '/privacy': '/privacy-index',
+  '/thanks': '/thanks-index',
 };
 
 function landingRewrites(): AstroIntegration {
@@ -63,6 +64,8 @@ export default defineConfig({
           return item;
         }
         if (path === '/404') return undefined;
+        // Post-purchase pages are noindex; keep them out of the sitemap.
+        if (path === '/thanks-index' || path.endsWith('/thanks')) return undefined;
         for (const slug of PRODUCT_SLUGS) {
           if (path === `/${slug}`) {
             item.url = `https://${PRODUCT_HOSTS[slug]}/`;

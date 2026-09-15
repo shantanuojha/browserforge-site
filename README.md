@@ -21,6 +21,8 @@ Static Astro site. No UI framework, no analytics, fonts self-hosted. One Vercel 
 | `/privacy/arbor`, `/privacy/reroute`, `/privacy/cookiesweep` | `src/layouts/PrivacyPolicy.astro` | Per-extension privacy policy with permissions table and Limited Use statement; canonical at `https://<slug>.shantanuojha.com/privacy` |
 | `/terms` | `src/pages/terms.astro` | One-time licence terms, refunds, MIT |
 | `/support` | `src/pages/support.astro` | GitHub issue links per product, email |
+| `/arbor/thanks`, `/reroute/thanks` | `src/layouts/PurchaseThanks.astro` | Post-purchase page (Polar checkout success URL); canonical at `https://<slug>.shantanuojha.com/thanks`, noindex |
+| `/thanks` | `src/pages/thanks-index.astro` | Apex fallback linking to both product thanks pages; built as `thanks-index.html`, Vercel rewrites `/thanks` to it, noindex |
 | `/404` | `src/pages/404.astro` | Served by Vercel for unknown paths on every host |
 | `/sitemap-index.xml`, `/robots.txt` | generated / `public/` | |
 
@@ -47,7 +49,7 @@ The build is a plain static folder. `vercel.json` does the rest:
 
 - `cleanUrls: true`, `trailingSlash: false`, and Astro is configured with `build.format: 'file'` and `trailingSlash: 'never'`, so `/arbor` serves `arbor.html`.
 - For each product host, rewrites with `has: [{ type: "host", value: "arbor.shantanuojha.com" }]` map `/` to `/arbor`, `/privacy` to `/privacy/arbor`, and `/(.*)` to `/arbor/$1`. Order matters: the `/privacy` rule must come before the catch-all.
-- Vercel serves files that exist on disk **before** evaluating rewrites. That is why the landing page is built as `home.html` rather than `index.html`, and the privacy index as `privacy-index.html` rather than `privacy/index.html`: a file at the canonical path would win over the host rewrite and every product subdomain would show the landing page (or the policy index). Final rewrites map `/` to `/home` and `/privacy` to `/privacy-index` for the landing host.
+- Vercel serves files that exist on disk **before** evaluating rewrites. That is why the landing page is built as `home.html` rather than `index.html`, and the privacy index as `privacy-index.html` rather than `privacy/index.html`: a file at the canonical path would win over the host rewrite and every product subdomain would show the landing page (or the policy index). Final rewrites map `/` to `/home`, `/privacy` to `/privacy-index` and `/thanks` to `/thanks-index` for the landing host.
 - Apex redirects (308) send `shantanuojha.com/arbor`, `/arbor/*` and `/privacy/arbor` to the product host; likewise for the other products.
 
 Because product pages and privacy policies are served from their own hosts, every link that leaves those pages is an absolute URL (`src/lib/links.ts`), and only `#anchors` are relative. Pages that live only on the landing host (privacy index, terms, support) use relative links so preview deployments keep working.
